@@ -9,8 +9,10 @@ loadSprite("ghost", "/assets/ghosty.png");
 
 loadSprite("fish","/assets/bobo.png");
 
+loadSprite("peaShooter","/assets/gun.png");
 
 let SPEED = 500;
+let bulletSpeed = 1500;
 
 const root = add([
     sprite("fish"),
@@ -39,6 +41,9 @@ const player = add([
     pos(center()),
     anchor("center"),
     "player",
+    {
+        health: 50,
+    }
 ]);
 
 onKeyDown("a", () => {
@@ -58,11 +63,38 @@ onKeyDown("s", () => {
     player.move(0, SPEED);
 });
 
+const peaShooter = player.add([
+    sprite("peaShooter"),
+    anchor(vec2(-2,0)),
+    rotate(0),
+    "player",
+]);
+
+onMouseMove(() => {
+    peaShooter.angle = mousePos().sub(player.pos).angle();
+    peaShooter.flipY = Math.abs(peaShooter.angle) > 90;
+});
+function spawnPea(p) {
+   add([
+    circle(10),
+    pos(p),
+    color(GREEN),
+    move(peaShooter.angle,bulletSpeed)
+    ]) 
+}
+
+onMousePress(() => {
+   spawnPea(player.pos);
+})
+    
+
+
 const enemy = add([
     sprite("ghost"),
     pos(50, 50),
     anchor("center"),
     state("move", ["attackRoot", "attackPlayer", "move"]),
+    
 ]);
 
 enemy.onStateUpdate("move", () => {
