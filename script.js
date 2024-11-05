@@ -17,13 +17,27 @@ const root = add([
     pos(center()),
     scale(2),
     "root",
+    { health: 100,
+    }
 ]);
+
+const rootHp = add([
+    text(root.health),
+    pos(root.pos.x + 40, root.pos.y - 40),
+    color(GREEN),
+]);
+
+onUpdate(() => {
+    if (root.health < 45) {
+        rootHp.use(color(RED));
+    } 
+  });
 
 const player = add([
     sprite("player"),
     pos(center()),
     anchor("center"),
-    "player"
+    "player",
 ]);
 
 onKeyDown("a", () => {
