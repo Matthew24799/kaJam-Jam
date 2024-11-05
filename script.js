@@ -6,7 +6,7 @@ kaplay()
 loadSprite("player","/assets/bean.png");
 
 loadSprite("ghost", "/assets/ghosty.png");
-=======
+
 loadSprite("fish","/assets/bobo.png");
 
 
