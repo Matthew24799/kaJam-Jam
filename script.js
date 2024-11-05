@@ -4,15 +4,30 @@ kaplay()
 
 
 loadSprite("player","/assets/bean.png");
+
 loadSprite("ghost", "/assets/ghosty.png");
+=======
+loadSprite("fish","/assets/bobo.png");
+
 
 let SPEED = 500;
+
+const root = add([
+    sprite("fish"),
+    pos(center()),
+    scale(2),
+    "root",
+]);
 
 const player = add([
     sprite("player"),
     pos(center()),
+
     anchor("center"),
     "player"
+
+    "player",
+
 ]);
 
 onKeyDown("a", () => {
