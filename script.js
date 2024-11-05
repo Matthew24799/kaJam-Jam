@@ -1,6 +1,10 @@
 import kaplay from "https://unpkg.com/kaplay@3001.0.0-alpha.20/dist/kaplay.mjs";
 
-kaplay()
+kaplay({
+    width: 1920,
+    height: 1080,
+    background: [74, 48, 82],
+})
 
 
 loadSprite("player","/assets/bean.png");
