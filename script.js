@@ -16,6 +16,7 @@ const root = add([
     sprite("fish"),
     pos(center()),
     scale(2),
+    anchor("center"),
     "root",
     { health: 100,
     }
@@ -57,8 +58,6 @@ onKeyDown("s", () => {
     player.move(0, SPEED);
 });
 
-
-
 const enemy = add([
     sprite("ghost"),
     pos(50, 50),
@@ -67,7 +66,18 @@ const enemy = add([
 ]);
 
 enemy.onStateUpdate("move", () => {
+    if(!root.exists()) return;
+
+    if(enemy.pos.dist(player.pos) < 200) {
+        enemy.enterState("attackPlayer")
+    }
+
+    const dir = root.pos.sub(enemy.pos).unit();
+    enemy.move(dir.scale(200));
+});
+
+enemy.onStateUpdate("attackPlayer", () => {
     if(!player.exists()) return;
     const dir = player.pos.sub(enemy.pos).unit();
     enemy.move(dir.scale(200));
-});
+})
