@@ -62,7 +62,7 @@ const enemy = add([
     sprite("ghost"),
     pos(50, 50),
     anchor("center"),
-    state("move", ["idle", "attack", "move"]),
+    state("move", ["attackRoot", "attackPlayer", "move"]),
 ]);
 
 enemy.onStateUpdate("move", () => {
