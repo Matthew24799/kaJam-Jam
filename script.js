@@ -9,7 +9,7 @@ kaplay({
 
 loadSprite("player","/assets/bean.png");
 
-loadSprite("ghost", "/assets/ghosty.png");
+loadSprite("ant", "/assets/Ant.png");
 
 loadSprite("fish","/assets/bobo.png");
 
@@ -95,7 +95,8 @@ onMousePress(() => {
 
 
 const enemy = add([
-    sprite("ghost"),
+    sprite("ant"),
+        scale(0.25, 0.25),
     pos(50, 50),
     anchor("center"),
     state("move", ["attackRoot", "attackPlayer", "move"]),
