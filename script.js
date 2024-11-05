@@ -29,6 +29,7 @@ const rootHp = add([
 ]);
 
 onUpdate(() => {
+    rootHp.text = root.health;
     if (root.health < 45) {
         rootHp.use(color(RED));
     } 
@@ -68,6 +69,10 @@ const enemy = add([
 enemy.onStateUpdate("move", () => {
     if(!root.exists()) return;
 
+    if(enemy.pos.dist(root.pos) < 25) {
+        enemy.enterState("attackRoot")
+    }
+
     if(enemy.pos.dist(player.pos) < 200) {
         enemy.enterState("attackPlayer")
     }
@@ -78,6 +83,16 @@ enemy.onStateUpdate("move", () => {
 
 enemy.onStateUpdate("attackPlayer", () => {
     if(!player.exists()) return;
+
     const dir = player.pos.sub(enemy.pos).unit();
-    enemy.move(dir.scale(200));
+    enemy.move(dir.scale(250));
+})
+
+enemy.onStateEnter("attackRoot", async () => {
+    enemy.use(rotate(30));
+    root.health = root.health - 2;
+    await wait(1);
+    enemy.use(rotate(0));
+    await wait(2);
+    enemy.enterState("attackRoot");
 })
