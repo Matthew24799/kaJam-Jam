@@ -4,7 +4,11 @@ kaplay()
 
 
 loadSprite("player","/assets/bean.png");
+
+loadSprite("ghost", "/assets/ghosty.png");
+=======
 loadSprite("fish","/assets/bobo.png");
+
 
 let SPEED = 500;
 
@@ -18,7 +22,12 @@ const root = add([
 const player = add([
     sprite("player"),
     pos(center()),
+
+    anchor("center"),
+    "player"
+
     "player",
+
 ]);
 
 onKeyDown("a", () => {
@@ -36,4 +45,19 @@ onKeyDown("w", () => {
 
 onKeyDown("s", () => {
     player.move(0, SPEED);
+});
+
+
+
+const enemy = add([
+    sprite("ghost"),
+    pos(50, 50),
+    anchor("center"),
+    state("move", ["idle", "attack", "move"]),
+]);
+
+enemy.onStateUpdate("move", () => {
+    if(!player.exists()) return;
+    const dir = player.pos.sub(enemy.pos).unit();
+    enemy.move(dir.scale(200));
 });
