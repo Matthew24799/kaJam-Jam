@@ -22,12 +22,8 @@ const root = add([
 const player = add([
     sprite("player"),
     pos(center()),
-
     anchor("center"),
     "player"
-
-    "player",
-
 ]);
 
 onKeyDown("a", () => {
