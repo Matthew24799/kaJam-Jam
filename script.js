@@ -24,7 +24,7 @@ const root = add([
 
 const rootHp = add([
     text(root.health),
-    pos(root.pos.x + 40, root.pos.y - 40),
+    pos(root.pos.x, root.pos.y - 70),
     color(GREEN),
 ]);
 
