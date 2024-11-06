@@ -135,72 +135,76 @@ function spawnPea(p) {
 onMousePress(() => {
    spawnPea(player.pos);
 })
-    
-let enemy = add([
-    sprite("ant"),
-        scale(0.25, 0.25),
-    pos(50, rand(100)),
-    anchor("center"),
-    body(),
-    area(),
-    state("move", ["attackRoot", "attackPlayer", "move"]),
-    "ant"
-]);
+ 
+function spawnBlackAnt(p) {
+    const blackAnt = add([
+        {
+            add() {
+                this.onStateUpdate("move", () => {
+                    if(!root.exists()) return;
+                
+                    if(this.pos.dist(root.pos) < 25) {
+                        this.enterState("attackRoot");
+                    };
+                
+                    if(this.pos.dist(player.pos) < 200) {
+                        this.enterState("attackPlayer");
+                    };
+                
+                    const dir = root.pos.sub(this.pos).unit();
+                    this.move(dir.scale(200));
+                });
+                this.onStateUpdate("attackPlayer", () => {
+                    if(!player.exists()) return;
+                
+                    const dir = player.pos.sub(this.pos).unit();
+                    this.move(dir.scale(250));
+                });
+                this.onStateEnter("attackRoot", async () => {
+                    if(!this.exists()) return;
+                    this.use(rotate(30));
+                    rootHp = rootHp - 10;
+                    root.hurt(10);
+                    await wait(1);
+                    this.use(rotate(0));
+                    await wait(2);
+                    this.enterState("attackRoot");
+                });
+                this.onStateEnter("attackPlayer", async () => {
+                    if(!this.exists()) return;w
+                    if(this.pos.dist(player.pos) < 200) {
+                    this.use(rotate(30));
+                    playerHp = playerHp - 10;
+                    player.hurt(10);
+                    await wait(1);
+                    this.use(rotate(0));
+                    await wait(2);
+                    this.enterState("attackPlayer");
+                    }
+                    else return this.enterState("move");
+                });
+                onCollide("pea", "ant", (pea) => {
+                    destroy(this)
+                    destroy(pea)
+                });
+            },
+        },
+        sprite("ant"),
+            scale(0.25, 0.25),
+        pos(p),
+        anchor("center"),
+        body(),
+        area(),
+        state("move", ["attackRoot", "attackPlayer", "move"]),
+        "ant",
+    ]);
+    return blackAnt;
+};
 
-
-
-enemy.onStateUpdate("move", () => {
-    if(!root.exists()) return;
-
-    if(enemy.pos.dist(root.pos) < 25) {
-        enemy.enterState("attackRoot")
-    }
-
-    if(enemy.pos.dist(player.pos) < 200) {
-        enemy.enterState("attackPlayer")
-    }
-
-    const dir = root.pos.sub(enemy.pos).unit();
-    enemy.move(dir.scale(200));
-});
-
-enemy.onStateUpdate("attackPlayer", () => {
-    if(!player.exists()) return;
-
-    const dir = player.pos.sub(enemy.pos).unit();
-    enemy.move(dir.scale(250));
-})
-
-enemy.onStateEnter("attackRoot", async () => {
-    enemy.use(rotate(30));
-   rootHp = rootHp - 10;
-   root.hurt(10);
-    await wait(1);
-    enemy.use(rotate(0));
-    await wait(2);
-    enemy.enterState("attackRoot");
-})
-
-enemy.onStateEnter("attackPlayer", async () => {
-    if(enemy.pos.dist(player.pos) < 200) {
-    enemy.use(rotate(30));
-    playerHp = playerHp - 10;
-    player.hurt(10);
-    await wait(1);
-    enemy.use(rotate(0));
-    await wait(2);
-    enemy.enterState("attackPlayer");
-    }
-   else return enemy.enterState("move");
-})
-
-
-
-
-onCollide("pea", "ant", (pea) => {
-    destroy(enemy)
-    destroy(pea)
-});
+spawnBlackAnt(rand(50));
+spawnBlackAnt(rand(250));
+spawnBlackAnt(rand(500));
+spawnBlackAnt(rand(1000));
 
 loop(1, () => { 
 debug.log(rootHp)
