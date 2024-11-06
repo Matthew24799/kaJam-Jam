@@ -58,7 +58,7 @@ onUpdate(() => {
     if (rootHp <= 0) {
         destroy(root);
         wait(1, () => {
-            destroy(rootHp);
+            destroy(rootHealthbar);
         })
     }
   });
