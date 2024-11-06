@@ -18,7 +18,9 @@ loadSprite("peaShooter","/assets/gun.png");
 let SPEED = 500;
 let bulletSpeed = 1500;
 let playerHp = 50;
+let rootHp = 100;
 let size = 90;
+let rootHealthsize = 150;
 
 const root = add([
     sprite("fish"),
@@ -26,25 +28,34 @@ const root = add([
     scale(2),
     anchor("center"),
     "root",
-    { health: 100,
-    }
+   health(rootHp),
+   area(),
+   
 ]);
 
-const rootHp = add([
-    text(root.health),
+const rootHealthbar = add([
+    rect(rootHealthsize, 30),
     pos(root.pos.x, root.pos.y - 70),
     color(GREEN),
+    outline(5,BLACK),
+
+    {
+        max: rootHp,
+        set(hp) {
+            this.width = rootHealthsize * hp / this.max;
+        }
+    }
 ]);
 
 onUpdate(() => {
     if(playerHp <= 0) {
         destroy(player)
     }
-    rootHp.text = root.health;
-    if (root.health < 45) {
-        rootHp.use(color(RED));
+
+    if (rootHp < 45) {
+        rootHealthbar.use(color(RED));
     } 
-    if (root.health <= 0) {
+    if (rootHp <= 0) {
         destroy(root);
         wait(1, () => {
             destroy(rootHp);
@@ -78,6 +89,9 @@ player.onHurt(() => {
     playerHealthbar.set(player.hp());
 });
 
+root.onHurt(() => {
+    rootHealthbar.set(root.hp());
+})
 
 onKeyDown("a", () => {
 
@@ -159,7 +173,8 @@ enemy.onStateUpdate("attackPlayer", () => {
 
 enemy.onStateEnter("attackRoot", async () => {
     enemy.use(rotate(30));
-    root.health = root.health - 2;
+   rootHp = rootHp - 10;
+   root.hurt(10);
     await wait(1);
     enemy.use(rotate(0));
     await wait(2);
@@ -188,5 +203,5 @@ onCollide("pea", "ant", (pea) => {
 });
 
 loop(1, () => { 
-debug.log(playerHp)
+debug.log(rootHp)
 })
