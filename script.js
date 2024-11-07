@@ -21,6 +21,8 @@ let playerHp = 50;
 let rootHp = 100;
 let size = 90;
 let rootHealthsize = 150;
+let antNum = 0;
+let antId = "0";
 
 const root = add([
     sprite("fish"),
@@ -136,7 +138,7 @@ onMousePress(() => {
    spawnPea(player.pos);
 })
  
-function spawnBlackAnt(p) {
+function spawnBlackAnt(px, py, id) {
     const blackAnt = add([
         {
             add() {
@@ -161,17 +163,17 @@ function spawnBlackAnt(p) {
                     this.move(dir.scale(250));
                 });
                 this.onStateEnter("attackRoot", async () => {
-                    if(!this.exists()) return;
+                    if(!this.exists() || !root.exists()) return;
                     this.use(rotate(30));
-                    rootHp = rootHp - 10;
-                    root.hurt(10);
+                    rootHp = rootHp - 2;
+                    root.hurt(2);
                     await wait(1);
                     this.use(rotate(0));
                     await wait(2);
                     this.enterState("attackRoot");
                 });
                 this.onStateEnter("attackPlayer", async () => {
-                    if(!this.exists()) return;w
+                    if(!this.exists() || !player.exists()) return;
                     if(this.pos.dist(player.pos) < 200) {
                     this.use(rotate(30));
                     playerHp = playerHp - 10;
@@ -183,7 +185,7 @@ function spawnBlackAnt(p) {
                     }
                     else return this.enterState("move");
                 });
-                onCollide("pea", "ant", (pea) => {
+                onCollide("pea", id, (pea) => {
                     destroy(this)
                     destroy(pea)
                 });
@@ -191,20 +193,22 @@ function spawnBlackAnt(p) {
         },
         sprite("ant"),
             scale(0.25, 0.25),
-        pos(p),
+        pos(px, py),
         anchor("center"),
-        body(),
         area(),
         state("move", ["attackRoot", "attackPlayer", "move"]),
         "ant",
+        id,
     ]);
+    antNum++
+    antId = antNum.toString();
     return blackAnt;
 };
 
-spawnBlackAnt(rand(50));
-spawnBlackAnt(rand(250));
-spawnBlackAnt(rand(500));
-spawnBlackAnt(rand(1000));
+spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
 
 loop(1, () => { 
 debug.log(rootHp)
