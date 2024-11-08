@@ -7,13 +7,13 @@ kaplay({
 })
 
 
-loadSprite("player","/assets/bean.png");
+loadSprite("player","assets/bean.png");
 
-loadSprite("ant", "/assets/Ant.png");
+loadSprite("ant", "assets/Ant.png");
 
-loadSprite("fish","/assets/bobo.png");
+loadSprite("fish","assets/bobo.png");
 
-loadSprite("peaShooter","/assets/gun.png");
+loadSprite("peaShooter","assets/gun.png");
 
 let SPEED = 500;
 let bulletSpeed = 1500;
