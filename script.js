@@ -15,7 +15,10 @@ loadSprite("fish","assets/bobo.png");
 
 loadSprite("peaShooter","assets/gun.png");
 
+
 scene("game", () => {
+
+
 
 let SPEED = 500;
 let bulletSpeed = 1500;
