@@ -15,6 +15,11 @@ loadSprite("fish","assets/bobo.png");
 
 loadSprite("peaShooter","assets/gun.png");
 
+
+scene("game", () => {
+
+
+
 let SPEED = 500;
 let bulletSpeed = 1500;
 let playerHp = 50;
@@ -61,7 +66,10 @@ onUpdate(() => {
         destroy(root);
         wait(1, () => {
             destroy(rootHealthbar);
+            go("lose");
         })
+
+
     }
   });
 
@@ -135,7 +143,9 @@ function spawnPea(p) {
 }
 
 onMousePress(() => {
+    if(playerHp > 0) {
    spawnPea(player.pos);
+    }
 })
  
 function spawnBlackAnt(px, py, id) {
@@ -210,6 +220,21 @@ spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
 spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
 spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
 
-loop(1, () => { 
-debug.log(rootHp)
 })
+
+scene("lose", () => {
+    add([
+        text("THE ROOT HAS DIED"),
+        pos(center()),
+    ]);
+
+    add([
+        text("PRESS SPACE TO RESTART"),
+        pos(width() / 2, height() / 2 + 50),
+    ]);
+
+    // Press any key to go back
+    onKeyPress("space", () => go("game"));
+});
+
+go("game")
