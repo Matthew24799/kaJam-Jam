@@ -215,10 +215,14 @@ function spawnBlackAnt(px, py, id) {
     return blackAnt;
 };
 
+
 spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+
+loop(1, () => {
+    
 spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
-spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
-spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+
+  });
 
 })
 
