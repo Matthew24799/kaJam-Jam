@@ -15,6 +15,15 @@ loadSprite("fish","assets/bobo.png");
 
 loadSprite("peaShooter","assets/gun.png");
 
+loadSprite("perkBackground", "assets/PerkMenu.png", {
+    sliceX: 6,
+    sliceY: 5,
+    anims: {
+        appear: { from: 0, to: 26},
+        remain: { from: 24, to: 26, loop: true},
+    },
+});
+
 
 scene("game", () => {
 
@@ -55,8 +64,11 @@ const rootHealthbar = add([
 ]);
 
 onUpdate(() => {
+    if(get("menu").length > 0) return;
+
     if(playerHp <= 0) {
-        destroy(player)
+        perkChoice();
+        destroy(player);
     }
 
     if (rootHp < 45) {
@@ -93,7 +105,22 @@ const playerHealthbar = player.add([
             this.width = size * hp / this.max;
         }
     }
-])
+]);
+
+function perkChoice() {
+    const perkMenu = add([
+        sprite("perkBackground"),
+        pos(center()),
+        anchor("center"),
+        "menu",
+    ]);
+
+    perkMenu.play("appear");
+    perkMenu.onAnimEnd(() => {
+        perkMenu.play("remain");
+    });
+};
+    
 
 player.onHurt(() => {
     playerHealthbar.set(player.hp());
@@ -153,7 +180,7 @@ function spawnBlackAnt(px, py, id) {
         {
             add() {
                 this.onStateUpdate("move", () => {
-                    if(!root.exists()) return;
+                    if(!root.exists() || !player.exists()) return;
                 
                     if(this.pos.dist(root.pos) < 25) {
                         this.enterState("attackRoot");
@@ -219,10 +246,11 @@ function spawnBlackAnt(px, py, id) {
 spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
 
 loop(1, () => {
+    if(!root.exists() || !player.exists()) return;
     
-spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+    spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
 
-  });
+    });
 
 })
 
