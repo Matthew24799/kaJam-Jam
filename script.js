@@ -24,8 +24,17 @@ loadSprite("perkBackground", "assets/PerkMenu.png", {
     },
 });
 
+loadSprite("perkHp", "assets/PerkFrameRed.png", {
+    sliceX: 3,
+    anims: {
+        play: { from: 0, to: 2, loop: true},
+    },
+});
+
 
 scene("game", () => {
+
+layers(["background", "game", "foreground", "menues"], "game");
 
 
 
@@ -37,6 +46,10 @@ let size = 90;
 let rootHealthsize = 150;
 let antNum = 0;
 let antId = "0";
+let speedMod = 0
+let bulletMod = 0
+let hpMod = 0
+let perkTimer = 0
 
 const root = add([
     sprite("fish"),
@@ -67,6 +80,7 @@ onUpdate(() => {
     if(get("menu").length > 0) return;
 
     if(playerHp <= 0) {
+        console.log(perkTimer);
         perkChoice();
         destroy(player);
     }
@@ -90,8 +104,13 @@ const player = add([
     pos(center()),
     anchor("center"),
     "player",
-    health(playerHp)
+    health(playerHp),
+    timer(),
 ]);
+
+player.loop(1, () => {
+    perkTimer++
+});
 
 const playerHealthbar = player.add([
     rect(size,10),
@@ -107,20 +126,66 @@ const playerHealthbar = player.add([
     }
 ]);
 
+
+
+
+
+
+
+
+
+
+const perkHp = make([
+    sprite("perkHp"),
+        scale(0.75, 0.75),
+    pos(center().x, center().y + 75),
+    anchor("center"),
+    opacity(1),
+        fadeIn(0.5),
+    area({scale: 0.7}),
+    layer("menues"),
+    "perk",
+]);
+
+let perks = [perkHp, 1, 2, 3, 4, 5, 6]
+
 function perkChoice() {
     const perkMenu = add([
         sprite("perkBackground"),
-        pos(center()),
+        pos(toScreen(center())),
         anchor("center"),
+        layer("foreground"),
         "menu",
     ]);
 
     perkMenu.play("appear");
-    perkMenu.onAnimEnd(() => {
+    perkMenu.onAnimEnd((appear) => {
         perkMenu.play("remain");
+        add(perks[0]);
+        perkHp.play("play");
     });
-};
-    
+};  
+
+function perkSelection() {
+    if(perkTimer <= 60) {
+        if(rand(1, 100) <= 80) {
+            
+        }
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 player.onHurt(() => {
     playerHealthbar.set(player.hp());
