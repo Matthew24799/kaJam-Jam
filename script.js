@@ -38,6 +38,13 @@ loadSprite("perkSpeed", "assets/PerkFrameOrange.png", {
     },
 });
 
+loadSprite("perkAttack", "assets/PerkFrameYellow.png", {
+    sliceX: 3,
+    anims: {
+        play: { from: 0, to: 2, loop: true},
+    },
+});
+
 scene("game", () => {
 
 layers(["background", "game", "foreground", "menues"], "game");
@@ -53,11 +60,9 @@ let rootHealthsize = 150;
 let antNum = 0;
 let antId = "0";
 let speedMod = 0
-let bulletMod = 0
+let attackMod = 0
 let hpMod = 0
 let perkTimer = 0
-let x = 0
-let y = 0
 
 const root = add([
     sprite("fish"),
@@ -211,18 +216,46 @@ function perkSelection() {
         "menu",
     ]);
 
-    const perks = [perkHp, perkSpeed, 2, 3, 4, 5, 6]
+    const perkAttack = make([
+        {
+            add() {
+                this.onHover(() => {
+                    this.use(scale(1, 1));
+                });
+                this.onHoverEnd(() => {
+                    this.use(scale(0.75, 0.75));
+                });
+                this.onClick(() => {
+                    attackMod++;
+                    playerHp = 50 + (hpMod * 25)
+                    add(player);
+                    destroyAll("menu");
+                });
+            },
+        },
+        sprite("perkAttack"),
+            scale(0.75, 0.75),
+        pos(center().x, center().y + 75),
+        anchor("center"),
+        opacity(1),
+            fadeIn(0.5),
+        area({scale: 0.7}),
+        layer("menues"),
+        "menu",
+    ]);
+
+    const perks = [perkHp, perkSpeed, perkAttack, 3, 4, 5, 6]
 
     if(perkTimer <= 30) {
         if(rand(1, 100) <= 80) {
-            let perk1 = Math.round(rand(0,1));
+            let perk1 = Math.round(rand(0,2));
             add(perks[perk1]);
             perks[perk1].play("play");
         } else {
-            let perk1 = Math.round(rand(0,1));
-            let perk2 = Math.round(rand(0,1));
+            let perk1 = Math.round(rand(0,2));
+            let perk2 = Math.round(rand(0,2));
             while(perk1 == perk2) {
-                perk2 = Math.round(rand(0,1));
+                perk2 = Math.round(rand(0,2));
             };
             add(perks[perk1]);
             perks[perk1].use(pos(center().x - 100, center().y + 75))
@@ -232,7 +265,44 @@ function perkSelection() {
             perks[perk2].play("play");
         };
 
-    } else if(perkTimer <= 60)
+    } else if(30 < perkTimer <= 60) {
+        let i = rand(1, 100)
+        if(i <= 50) {
+            let perk1 = Math.round(rand(0,5));
+            add(perks[perk1]);
+            perks[perk1].play("play");
+        } else if(50 < i <= 90) {
+            let perk1 = Math.round(rand(0,5));
+            let perk2 = Math.round(rand(0,5));
+            while(perk1 == perk2) {
+                perk2 = Math.round(rand(0,5));
+            };
+            add(perks[perk1]);
+            perks[perk1].use(pos(center().x - 100, center().y + 75))
+            perks[perk1].play("play");
+            add(perks[perk2]);
+            perks[perk2].use(pos(center().x + 100, center().y + 75))
+            perks[perk2].play("play");
+        } else {
+            let perk1 = Math.round(rand(0,6));
+            let perk2 = Math.round(rand(0,6));
+            let perk3 = Math.round(rand(0,6));
+            while (perk1 == perk2) {
+                perk2 = Math.round(rand(0,6));
+            };
+            while (perk3 == perk1 || perk2) {
+                perk3 = Math.round(rand(0,6));
+            };
+            add(perks[perk1]);
+            perks[perk1].use(pos(center().x - 200, center().y + 75))
+            perks[perk1].play("play");
+            add(perks[perk2]);
+            perks[perk2].play("play");
+            add(perks[perk3]);
+            perks[perk3].use(pos(center().x + 200, center().y + 75))
+            perks[perk3].play("play");
+        };
+    };
 
     perkTimer = 0;
 };
@@ -350,16 +420,20 @@ function spawnBlackAnt(px, py, id) {
                     else return this.enterState("move");
                 });
                 onCollide("pea", id, (pea) => {
-                    destroy(this)
-                    destroy(pea)
+                    this.hurt(5 + (attackMod * 5));
+                    destroy(pea);
+                });
+                this.onDeath(() => {
+                    destroy(this);
                 });
             },
         },
         sprite("ant"),
-            scale(0.25, 0.25),
+            scale(0.3, 0.3),
         pos(px, py),
         anchor("center"),
         area(),
+        health(15),
         state("move", ["attackRoot", "attackPlayer", "move"]),
         "ant",
         id,
