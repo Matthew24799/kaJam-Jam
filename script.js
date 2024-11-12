@@ -31,6 +31,12 @@ loadSprite("perkHp", "assets/PerkFrameRed.png", {
     },
 });
 
+loadSprite("perkSpeed", "assets/PerkFrameOrange.png", {
+    sliceX: 3,
+    anims: {
+        play: { from: 0, to: 2, loop: true},
+    },
+});
 
 scene("game", () => {
 
@@ -50,6 +56,8 @@ let speedMod = 0
 let bulletMod = 0
 let hpMod = 0
 let perkTimer = 0
+let x = 0
+let y = 0
 
 const root = add([
     sprite("fish"),
@@ -80,9 +88,9 @@ onUpdate(() => {
     if(get("menu").length > 0) return;
 
     if(playerHp <= 0) {
-        console.log(perkTimer);
-        perkChoice();
         destroy(player);
+        destroy(playerHealthbar);
+        perkChoice();
     }
 
     if (rootHp < 45) {
@@ -128,52 +136,106 @@ const playerHealthbar = player.add([
 
 
 
-
-
-
-
-
-
-
-const perkHp = make([
-    sprite("perkHp"),
-        scale(0.75, 0.75),
-    pos(center().x, center().y + 75),
-    anchor("center"),
-    opacity(1),
-        fadeIn(0.5),
-    area({scale: 0.7}),
-    layer("menues"),
-    "perk",
-]);
-
-let perks = [perkHp, 1, 2, 3, 4, 5, 6]
-
 function perkChoice() {
+    
     const perkMenu = add([
         sprite("perkBackground"),
-        pos(toScreen(center())),
+        pos(center()),
         anchor("center"),
-        layer("foreground"),
+        layer("menues"),
         "menu",
     ]);
 
     perkMenu.play("appear");
     perkMenu.onAnimEnd((appear) => {
         perkMenu.play("remain");
-        add(perks[0]);
-        perkHp.play("play");
+        perkSelection();
     });
 };  
 
 function perkSelection() {
-    if(perkTimer <= 60) {
-        if(rand(1, 100) <= 80) {
-            
-        }
 
-    }
-}
+    const perkHp = make([
+        {
+            add() {
+                this.onHover(() => {
+                    this.use(scale(1, 1));
+                });
+                this.onHoverEnd(() => {
+                    this.use(scale(0.75, 0.75));
+                });
+                this.onClick(() => {
+                    hpMod++;
+                    playerHp = 50 + (hpMod * 25)
+                    add(player);
+                    destroyAll("menu");
+                });
+            },
+        },
+        sprite("perkHp"),
+            scale(0.75, 0.75),
+        pos(center().x, center().y + 75),
+        anchor("center"),
+        opacity(1),
+            fadeIn(0.5),
+        area({scale: 0.7}),
+        layer("menues"),
+        "menu",
+    ]);
+
+    const perkSpeed = make([
+        {
+            add() {
+                this.onHover(() => {
+                    this.use(scale(1, 1));
+                });
+                this.onHoverEnd(() => {
+                    this.use(scale(0.75, 0.75));
+                });
+                this.onClick(() => {
+                    speedMod++;
+                    playerHp = 50 + (hpMod * 25)
+                    add(player);
+                    destroyAll("menu");
+                });
+            },
+        },
+        sprite("perkSpeed"),
+            scale(0.75, 0.75),
+        pos(center().x, center().y + 75),
+        anchor("center"),
+        opacity(1),
+            fadeIn(0.5),
+        area({scale: 0.7}),
+        layer("menues"),
+        "menu",
+    ]);
+
+    const perks = [perkHp, perkSpeed, 2, 3, 4, 5, 6]
+
+    if(perkTimer <= 30) {
+        if(rand(1, 100) <= 80) {
+            let perk1 = Math.round(rand(0,1));
+            add(perks[perk1]);
+            perks[perk1].play("play");
+        } else {
+            let perk1 = Math.round(rand(0,1));
+            let perk2 = Math.round(rand(0,1));
+            while(perk1 == perk2) {
+                perk2 = Math.round(rand(0,1));
+            };
+            add(perks[perk1]);
+            perks[perk1].use(pos(center().x - 100, center().y + 75))
+            perks[perk1].play("play");
+            add(perks[perk2]);
+            perks[perk2].use(pos(center().x + 100, center().y + 75))
+            perks[perk2].play("play");
+        };
+
+    } else if(perkTimer <= 60)
+
+    perkTimer = 0;
+};
 
 
 
@@ -197,19 +259,19 @@ root.onHurt(() => {
 
 onKeyDown("a", () => {
 
-    player.move(-SPEED, 0);
+    player.move(-(SPEED + (speedMod * 100)), 0);
 });
 
 onKeyDown("d", () => {
-    player.move(SPEED, 0);
+    player.move((SPEED + (speedMod * 100)), 0);
 });
 
 onKeyDown("w", () => {
-    player.move(0, -SPEED);
+    player.move(0, -(SPEED + (speedMod * 100)));
 });
 
 onKeyDown("s", () => {
-    player.move(0, SPEED);
+    player.move(0, (SPEED + (speedMod * 100)));
 });
 
 const peaShooter = player.add([
