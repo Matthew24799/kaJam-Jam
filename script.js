@@ -53,6 +53,35 @@ loadSprite("perkAttack", "assets/PerkFrameYellow.png", {
     },
 });
 
+loadSprite("perkPierce", "assets/PerkFrameGreen.png", {
+    sliceX: 3,
+    anims: {
+        play: { from: 0, to: 2, loop: true},
+    },
+});
+
+loadSprite("perkDefense", "assets/PerkFrameBlue.png", {
+    sliceX: 3,
+    anims: {
+        play: { from: 0, to: 2, loop: true},
+    },
+});
+
+loadSprite("perkSize", "assets/PerkFramePurple.png", {
+    sliceX: 3,
+    anims: {
+        play: { from: 0, to: 2, loop: true},
+    },
+});
+
+loadSprite("perkAll", "assets/PerkFrameRainbow.png", {
+    sliceX: 3,
+    sliceY: 2,
+    anims: {
+        play: { from: 0, to: 5, loop: true},
+    },
+});
+
 layers(["background", "game", "foreground", "menues"], "game");
 
 scene("game", () => {
@@ -61,8 +90,8 @@ scene("game", () => {
 
 let SPEED = 500;
 let bulletSpeed = 1500;
-let playerHp = 50;
-let rootHp = 100;
+let playerHp = 500;
+let rootHp = 1000;
 let size = 90;
 let rootHealthsize = 150;
 let antNum = 0;
@@ -71,6 +100,8 @@ let speedMod = 0
 let attackMod = 0
 let hpMod = 0
 let pierceMod = 0
+let bulletMod = 0
+let defenseMod = 0
 let perkTimer = 0
 
 const root = add([
@@ -147,6 +178,15 @@ const playerHealthbar = player.add([
         }
     }
 ]);
+
+
+
+
+
+
+
+
+
 
 
 
@@ -253,7 +293,126 @@ function perkSelection() {
         "menu",
     ]);
 
-    const perks = [perkHp, perkSpeed, perkAttack, 3, 4, 5, 6]
+    const perkPierce = make([
+        {
+            add() {
+                this.onHover(() => {
+                    this.use(scale(1, 1));
+                });
+                this.onHoverEnd(() => {
+                    this.use(scale(0.75, 0.75));
+                });
+                this.onClick(() => {
+                    pierceMod++;
+                    playerHp = 50 + (hpMod * 25)
+                    add(player);
+                    destroyAll("menu");
+                });
+            },
+        },
+        sprite("perkPierce"),
+            scale(0.75, 0.75),
+        pos(center().x, center().y + 75),
+        anchor("center"),
+        opacity(1),
+            fadeIn(0.5),
+        area({scale: 0.7}),
+        layer("menues"),
+        "menu",
+    ]);
+
+    const perkDefense = make([
+        {
+            add() {
+                this.onHover(() => {
+                    this.use(scale(1, 1));
+                });
+                this.onHoverEnd(() => {
+                    this.use(scale(0.75, 0.75));
+                });
+                this.onClick(() => {
+                    defenseMod++;
+                    playerHp = 50 + (hpMod * 25)
+                    add(player);
+                    destroyAll("menu");
+                });
+            },
+        },
+        sprite("perkDefense"),
+            scale(0.75, 0.75),
+        pos(center().x, center().y + 75),
+        anchor("center"),
+        opacity(1),
+            fadeIn(0.5),
+        area({scale: 0.7}),
+        layer("menues"),
+        "menu",
+    ]);
+
+    const perkSize = make([
+        {
+            add() {
+                this.onHover(() => {
+                    this.use(scale(1, 1));
+                });
+                this.onHoverEnd(() => {
+                    this.use(scale(0.75, 0.75));
+                });
+                this.onClick(() => {
+                    bulletMod++;
+                    playerHp = 50 + (hpMod * 25)
+                    add(player);
+                    destroyAll("menu");
+                });
+            },
+        },
+        sprite("perkSize"),
+            scale(0.75, 0.75),
+        pos(center().x, center().y + 75),
+        anchor("center"),
+        opacity(1),
+            fadeIn(0.5),
+        area({scale: 0.7}),
+        layer("menues"),
+        "menu",
+    ]);
+
+    const perkAll = make([
+        {
+            add() {
+                this.onHover(() => {
+                    this.use(scale(1, 1));
+                });
+                this.onHoverEnd(() => {
+                    this.use(scale(0.75, 0.75));
+                });
+                this.onClick(() => {
+                    hpMod++;
+                    speedMod++;
+                    attackMod++;
+                    pierceMod++;
+                    defenseMod++;
+                    sizeMod++;
+                    playerHp = 50 + (hpMod * 25)
+                    add(player);
+                    destroyAll("menu");
+                });
+            },
+        },
+        sprite("perkAll"),
+            scale(0.75, 0.75),
+        pos(center().x, center().y + 75),
+        anchor("center"),
+        opacity(1),
+            fadeIn(0.5),
+        area({scale: 0.7}),
+        layer("menues"),
+        "menu",
+    ]);
+
+    const perks = [perkHp, perkSpeed, perkDefense, perkAttack, perkPierce, perkSize, perkAll]
+
+    console.log(perkTimer);
 
     if(perkTimer <= 30) {
         if(rand(1, 100) <= 80) {
@@ -301,6 +460,76 @@ function perkSelection() {
             };
             while (perk3 == perk1 || perk2) {
                 perk3 = Math.round(rand(0,6));
+            };
+            add(perks[perk1]);
+            perks[perk1].use(pos(center().x - 200, center().y + 75))
+            perks[perk1].play("play");
+            add(perks[perk2]);
+            perks[perk2].play("play");
+            add(perks[perk3]);
+            perks[perk3].use(pos(center().x + 200, center().y + 75))
+            perks[perk3].play("play");
+        };
+    } else if(60 < perkTimer <= 90) {
+        let i = rand(1, 100)
+        if(i <= 20) {
+            let perk1 = Math.round(rand(0,6));
+            add(perks[perk1]);
+            perks[perk1].play("play");
+        } else if(20 < i <= 70) {
+            let perk1 = Math.round(rand(0,6));
+            let perk2 = Math.round(rand(0,6));
+            while(perk1 == perk2) {
+                perk2 = Math.round(rand(0,6));
+            };
+            add(perks[perk1]);
+            perks[perk1].use(pos(center().x - 100, center().y + 75))
+            perks[perk1].play("play");
+            add(perks[perk2]);
+            perks[perk2].use(pos(center().x + 100, center().y + 75))
+            perks[perk2].play("play");
+        } else {
+            let perk1 = Math.round(rand(0,6));
+            let perk2 = Math.round(rand(0,6));
+            let perk3 = Math.round(rand(0,6));
+            while (perk1 == perk2) {
+                perk2 = Math.round(rand(0,6));
+            };
+            while (perk3 == perk1 || perk2) {
+                perk3 = Math.round(rand(0,6));
+            };
+            add(perks[perk1]);
+            perks[perk1].use(pos(center().x - 200, center().y + 75))
+            perks[perk1].play("play");
+            add(perks[perk2]);
+            perks[perk2].play("play");
+            add(perks[perk3]);
+            perks[perk3].use(pos(center().x + 200, center().y + 75))
+            perks[perk3].play("play");
+        };
+    } else {
+        let i = rand(1, 100)
+        if(i <= 50) {
+            let perk1 = Math.round(rand(3,6));
+            let perk2 = Math.round(rand(3,6));
+            while(perk1 == perk2) {
+                perk2 = Math.round(rand(3,6));
+            };
+            add(perks[perk1]);
+            perks[perk1].use(pos(center().x - 100, center().y + 75))
+            perks[perk1].play("play");
+            add(perks[perk2]);
+            perks[perk2].use(pos(center().x + 100, center().y + 75))
+            perks[perk2].play("play");
+        } else {
+            let perk1 = Math.round(rand(3,6));
+            let perk2 = Math.round(rand(3,6));
+            let perk3 = Math.round(rand(3,6));
+            while (perk1 == perk2) {
+                perk2 = Math.round(rand(3,6));
+            };
+            while (perk3 == perk1 || perk2) {
+                perk3 = Math.round(rand(3,6));
             };
             add(perks[perk1]);
             perks[perk1].use(pos(center().x - 200, center().y + 75))
@@ -373,7 +602,7 @@ function spawnPea(p) {
                     });
                 },
             },
-            circle(10),
+            circle((10 + bulletMod)),
             pos(p),
             color(GREEN),
             "pea",
@@ -445,8 +674,8 @@ function spawnBlackAnt(px, py, id) {
 
                     this.play("chomp");
                     wait(0.5, () => {
-                        playerHp = playerHp - 1
-                        player.hurt(1);
+                        playerHp = playerHp - (5 - (defenseMod * 0.5));
+                        player.hurt((5 - (defenseMod * 0.5)));
                         wait(0.5, () => {
                             this.enterState("followPlayer");
                         });
