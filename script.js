@@ -411,11 +411,11 @@ function spawnBlackAnt(px, py, id) {
                 });
 
                 this.onStateEnter("attackRoot", () => {
-                    if(!root.exists() || !player.exists()) return;
+                    if(!root.exists() || !player.exists() || !this.exists()) return;
 
                     this.play("chomp");
-                    this.onAnimEnd(() => {
-                        rootHp = rootHp - 1;
+                    wait(0.5, () => {
+                        
                         root.hurt(1);
                         wait(3, () => {
                             this.enterState("attackRoot");
@@ -441,13 +441,13 @@ function spawnBlackAnt(px, py, id) {
                 });
 
                 this.onStateEnter("attackPlayer", () => {
-                    if(!root.exists() || !player.exists()) return;
+                    if(!root.exists() || !player.exists() || !this.exists()) return;
 
                     this.play("chomp");
-                    this.onAnimEnd(() => {
-                        playerHp = playerHp - 1;
+                    wait(0.5, () => {
+                        playerHp = playerHp - 1
                         player.hurt(1);
-                        wait(3, () => {
+                        wait(0.5, () => {
                             this.enterState("followPlayer");
                         });
                     });
@@ -457,11 +457,11 @@ function spawnBlackAnt(px, py, id) {
                     this.hurt(5 + (attackMod * 5));
                     pea.hurt(1);
                 });
+
                 this.onDeath(() => {
                     destroy(this);
+                    return;
                 });
-
-                
             },
         },
         sprite("ant"),
