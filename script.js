@@ -70,6 +70,7 @@ let antId = "0";
 let speedMod = 0
 let attackMod = 0
 let hpMod = 0
+let pierceMod = 0
 let perkTimer = 0
 
 const root = add([
@@ -333,7 +334,7 @@ player.onHurt(() => {
 
 root.onHurt(() => {
     rootHealthbar.set(root.hp());
-})
+});
 
 onKeyDown("a", () => {
 
@@ -365,14 +366,22 @@ onMouseMove(() => {
 });
 function spawnPea(p) {
         add([
-    circle(10),
-    pos(p),
-    color(GREEN),
-    "pea",
-    area(),
-    move(peaShooter.angle,bulletSpeed)
-    ]) 
-}
+            {
+                add() {
+                    this.onDeath(() => {
+                        destroy(this)
+                    });
+                },
+            },
+            circle(10),
+            pos(p),
+            color(GREEN),
+            "pea",
+            area(),
+            health(1 + pierceMod),
+            move(peaShooter.angle,bulletSpeed)
+        ]); 
+};
 
 onMousePress(() => {
     if(playerHp > 0) {
@@ -387,59 +396,72 @@ function spawnBlackAnt(px, py, id) {
                 this.onStateEnter("move", () => {
                     this.play("walk");
                 });
+
                 this.onStateUpdate("move", () => {
                     if(!root.exists() || !player.exists()) return;
                 
                     if(this.pos.dist(root.pos) < 25) {
                         this.enterState("attackRoot");
-                    };
-
-                    if(this.pos.dist(player.pos) < 250) {
+                    } else if(this.pos.dist(player.pos) < 250) {
                         this.enterState("followPlayer");
+                    } else {
+                        const dir = root.pos.sub(this.pos).unit();
+                        this.move(dir.scale(200));
                     };
-                
-                    const dir = root.pos.sub(this.pos).unit();
-                    this.move(dir.scale(200));
                 });
 
-                this.onStateEnter("attackRoot", async () => {
-                    if(!this.exists() || !root.exists()) return;
-                    this.play("chomp")
-                    this.onAnimEnd(async (chomp) => {
-                        rootHp = rootHp - 1;
-                        root.hurt(2);
-                        await wait(3);
-                        this.enterState("move");
-                    });
-                });
-                this.onStateUpdate("followPlayer", async () => {
-                    if(!this.exists() || !player.exists()) return;
+                this.onStateEnter("attackRoot", () => {
+                    if(!root.exists() || !player.exists()) return;
 
-                    const dir = player.pos.sub(this.pos).unit();
-                    this.move(dir.scale(250));
-
-                    if(this.pos.dist(player.pos) < 50) {
-                        this.enterState("attackPlayer")
-                    }
-                });
-                this.onStateEnter("attackPlayer", async () => {
                     this.play("chomp");
-                    this.onAnimEnd(async (chomp) => {
-                        if(this.pos.dist(player.pos) < 50) {
-                            playerHp = playerHp - 10;
-                            player.hurt(10);
-                        };
-                        await wait(1);
-                        this.enterState("move");
+                    this.onAnimEnd(() => {
+                        rootHp = rootHp - 1;
+                        root.hurt(1);
+                        wait(3, () => {
+                            this.enterState("attackRoot");
+                        });
                     });
                 });
+
+                this.onStateEnter("followPlayer", () => {
+                    this.play("walk");
+                });
+
+                this.onStateUpdate("followPlayer", () => {
+                    if(!root.exists() || !player.exists()) return;
+                    
+                    if(this.pos.dist(player.pos) > 300) {
+                        this.enterState("move");
+                    } else if(this.pos.dist(player.pos) < 25) {
+                        this.enterState("attackPlayer");
+                    } else {
+                        const dir = player.pos.sub(this.pos).unit();
+                        this.move(dir.scale(250))
+                    };
+                });
+
+                this.onStateEnter("attackPlayer", () => {
+                    if(!root.exists() || !player.exists()) return;
+
+                    this.play("chomp");
+                    this.onAnimEnd(() => {
+                        playerHp = playerHp - 1;
+                        player.hurt(1);
+                        wait(3, () => {
+                            this.enterState("followPlayer");
+                        });
+                    });
+                })
+
                 onCollide("pea", id, (pea) => {
                     this.hurt(5 + (attackMod * 5));
-                    destroy(pea);
+                    pea.hurt(1);
                 });
                 this.onDeath(() => {
                     destroy(this);
                 });
+
+                
             },
         },
         sprite("ant"),
