@@ -9,7 +9,15 @@ kaplay({
 
 loadSprite("player","assets/bean.png");
 
-loadSprite("ant", "assets/Ant.png");
+loadSprite("ant", "assets/Ant.png", {
+    sliceX: 4,
+    sliceY: 4,
+    anims: {
+        idle: { from: 0, to: 0, loop: true},
+        walk: { from: 11, to: 15, loop: true},
+        chomp: { from: 0, to: 10},
+    },
+});
 
 loadSprite("fish","assets/bobo.png");
 
@@ -376,48 +384,55 @@ function spawnBlackAnt(px, py, id) {
     const blackAnt = add([
         {
             add() {
+                this.onStateEnter("move", () => {
+                    this.play("walk");
+                });
                 this.onStateUpdate("move", () => {
                     if(!root.exists() || !player.exists()) return;
                 
                     if(this.pos.dist(root.pos) < 25) {
                         this.enterState("attackRoot");
                     };
-                
-                    if(this.pos.dist(player.pos) < 200) {
+
+                    if(this.pos.dist(player.pos) < 250) {
                         this.enterState("attackPlayer");
                     };
                 
                     const dir = root.pos.sub(this.pos).unit();
                     this.move(dir.scale(200));
                 });
-                this.onStateUpdate("attackPlayer", () => {
-                    if(!player.exists()) return;
-                
-                    const dir = player.pos.sub(this.pos).unit();
-                    this.move(dir.scale(250));
-                });
+
                 this.onStateEnter("attackRoot", async () => {
                     if(!this.exists() || !root.exists()) return;
-                    this.use(rotate(30));
-                    rootHp = rootHp - 2;
-                    root.hurt(2);
-                    await wait(1);
-                    this.use(rotate(0));
-                    await wait(2);
-                    this.enterState("attackRoot");
+                    this.play("chomp")
+                    this.onAnimEnd(async (chomp) => {
+                        rootHp = rootHp - 2;
+                        root.hurt(2);
+                        await wait(3);
+                        this.enterState("attackRoot");
+                    });
                 });
                 this.onStateEnter("attackPlayer", async () => {
                     if(!this.exists() || !player.exists()) return;
-                    if(this.pos.dist(player.pos) < 200) {
-                    this.use(rotate(30));
-                    playerHp = playerHp - 10;
-                    player.hurt(10);
-                    await wait(1);
-                    this.use(rotate(0));
-                    await wait(2);
-                    this.enterState("attackPlayer");
-                    }
-                    else return this.enterState("move");
+
+                    const dir = player.pos.sub(this.pos).unit();
+                    this.move(dir.scale(250));
+
+                    if()
+                    };
+                });
+                this.onStateUpdate("attackPlayer", () => {
+                    if(this.pos.dist(player.pos) < 50) {
+                        this.play("chomp");
+                        this.onAnimEnd(async (chomp) => {
+                            if(this.pos.dist(player.pos) < 50) {
+                                playerHp = playerHp - 10;
+                                player.hurt(10);
+                                await wait(3);
+                                this.enterState("move");
+                            };
+                        });
+                    };    
                 });
                 onCollide("pea", id, (pea) => {
                     this.hurt(5 + (attackMod * 5));
