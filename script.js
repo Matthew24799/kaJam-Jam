@@ -173,6 +173,7 @@ const rootHealthbar = add([
 ]);
 
 onUpdate(() => {
+    debug.log(rootHp)
     if(get("menu").length > 0) return;
 
     if(playerHp <= 0) {
@@ -180,7 +181,7 @@ onUpdate(() => {
         perkChoice();
     }
 
-    if (rootHp < 45) {
+    if (rootHp < 15) {
         rootHealthbar.use(color(RED));
     } 
     if (rootHp <= 0) {
@@ -739,6 +740,7 @@ function spawnBlackAnt(px, py, id) {
                     wait(0.5, () => {
                         
                         root.hurt(1);
+                        rootHp = rootHp - 1
                         wait(3, () => {
                             this.enterState("attackRoot");
                         });
