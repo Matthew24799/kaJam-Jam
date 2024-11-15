@@ -7,7 +7,14 @@ kaplay({
 })
 
 
-loadSprite("player","assets/bean.png");
+loadSprite("player", "assets/flowr.png", {
+    sliceX: 4,
+
+    anims: {
+        "idle": {from: 0, to: 0, loop: true, },
+        "walk": {from: 0, to: 2, loop: true},
+    }
+})
 
 loadSprite("ant", "assets/Ant.png", {
     sliceX: 4,
@@ -188,6 +195,7 @@ onUpdate(() => {
 const player = add([
     sprite("player"),
     pos(center()),
+    scale(0.8,0.8),
     anchor("center"),
     "player",
     health(playerHp),
@@ -197,24 +205,11 @@ const player = add([
     opacity(1)
 ]);
 
+player.play("idle");
+
 player.loop(1, () => {
     perkTimer++
 });
-
-const playerHealthbar = player.add([
-    rect(size,10),
-    color(GREEN),
-    anchor(vec2(0,8)),
-    outline(5,BLACK),
-    z(10),
-    {
-        max: playerHp,
-        set(hp) {
-            this.width = size * hp / this.max;
-        }
-    }
-]);
-
 
 
 onUpdate(() => {
@@ -611,7 +606,6 @@ function perkSelection() {
 
 
 player.onHurt(() => {
-    playerHealthbar.set(player.hp());
     player.opacity = 0.5
     wait(0.2, () => {
         player.opacity = 1;
@@ -625,19 +619,37 @@ root.onHurt(() => {
 onKeyDown("a", () => {
 
     player.move(-(SPEED + (speedMod * 100)), 0);
+    player.flipX = false;
+    player.play("walk")
 });
 
 onKeyDown("d", () => {
     player.move((SPEED + (speedMod * 100)), 0);
+    player.flipX = true;
+    player.play("walk")
 });
 
 onKeyDown("w", () => {
     player.move(0, -(SPEED + (speedMod * 100)));
+    player.play("walk")
 });
 
 onKeyDown("s", () => {
     player.move(0, (SPEED + (speedMod * 100)));
+    player.play("walk")
 });
+
+
+["a", "d", "w", "s"].forEach((key) => {
+    onKeyRelease(key, () => {
+        // Only reset to "idle" if player is not holding any of these keys
+        if (!isKeyDown("a") && !isKeyDown("d") && !isKeyDown("s") && !isKeyDown("w") ) {
+            player.play("idle");
+        }
+    });
+});
+
+
 
 const peaShooter = player.add([
     sprite("peaShooter"),
