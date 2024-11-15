@@ -285,7 +285,7 @@ function perkSelection() {
                 });
                 this.onClick(() => {
                     hpMod++;
-                    playerHp = 50 + (hpMod * 25)
+                    playerHp = 10 + (hpMod * 5)
                     add(player);
                     destroyAll("menu");
                 });
