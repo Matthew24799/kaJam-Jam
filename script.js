@@ -155,6 +155,12 @@ scene("menu", () => {
     
   ])
 
+  add([
+    text("SHOOT: LEFT MOUSE"),
+        pos(790, 870),
+    
+  ])
+
 })
 
 scene("game", () => {
