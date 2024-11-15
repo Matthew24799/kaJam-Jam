@@ -164,7 +164,6 @@ const rootHealthbar = add([
 ]);
 
 onUpdate(() => {
-    debug.log(playerHp)
     if(get("menu").length > 0) return;
 
     if(playerHp <= 0) {
@@ -195,6 +194,7 @@ const player = add([
     timer(), 
     area(),
     body(),
+    opacity(1)
 ]);
 
 player.loop(1, () => {
@@ -225,17 +225,22 @@ onUpdate(() => {
 
 const displayHealth = add([
     text(`Health: ${playerHp}`),
-    pos(10,10),
+    pos(250,10),
 ]) 
 
 const displayMovementSpeed = add([
     text(`Movement: ${SPEED}`),
-    pos(300,10),
+    pos(600,10),
 ])
 
 const displayAttkSpeed = add([
     text(`AttackSpd: ${bulletSpeed}`),
-    pos(700,10),
+    pos(1000,10),
+])
+
+const displayArmor = add([
+    text(`Armor: ${defenseMod}`),
+    pos(1400, 10),
 ])
 
 function perkChoice() {
@@ -607,6 +612,10 @@ function perkSelection() {
 
 player.onHurt(() => {
     playerHealthbar.set(player.hp());
+    player.opacity = 0.5
+    wait(0.2, () => {
+        player.opacity = 1;
+      });
 });
 
 root.onHurt(() => {
@@ -732,6 +741,7 @@ function spawnBlackAnt(px, py, id) {
 
                 onCollide("pea", id, (pea) => {
                     this.hurt(5 + (attackMod * 5));
+                    this.fadeIn(0.2);
                     pea.hurt(1);
                 });
 
@@ -743,6 +753,7 @@ function spawnBlackAnt(px, py, id) {
         },
         sprite("ant"),
             scale(0.3, 0.3),
+            opacity(1),
         pos(px, py),
         anchor("center"),
         area(),
