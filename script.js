@@ -28,7 +28,12 @@ loadSprite("ant", "assets/Ant.png", {
     },
 });
 
-loadSprite("fish","assets/bobo.png");
+loadSprite("root","assets/Root.png", {
+    sliceX: 10,
+    anims: {
+        pulse: { from: 0, to: 9, loop:true},
+    },
+});
 
 loadSprite("peaShooter","assets/gun.png");
 
@@ -218,15 +223,16 @@ let defenseMod = 0
 let perkTimer = 0
 
 const root = add([
-    sprite("fish"),
+    sprite("root"),
     pos(center()),
-    scale(2),
     anchor("center"),
     "root",
    health(rootHp),
    area(),
    
 ]);
+
+root.play("pulse");
 
 const rootHealthbar = add([
     rect(rootHealthsize, 30),
