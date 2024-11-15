@@ -86,7 +86,41 @@ layers(["background", "game", "foreground", "menues"], "game");
 
 scene("game", () => {
 
+add([
+    rect(width(),1),
+    pos(0,0),
+    color(BLACK),
+    area(),
+    body(),
+    body({ isStatic: true }),
+])
 
+add([
+    rect(1,height()),
+    pos(0,0),
+    color(BLACK),
+    area(),
+    body(),
+    body({ isStatic: true }),
+])
+
+add([
+    rect(1,height()),
+    pos(1920,0),
+    color(BLACK),
+    area(),
+    body(),
+    body({ isStatic: true }),
+])
+
+add([
+    rect(width(),1),
+    pos(0,1080),
+    color(BLACK),
+    area(),
+    body(),
+    body({ isStatic: true }),
+])
 
 let SPEED = 500;
 let bulletSpeed = 1500;
@@ -130,6 +164,7 @@ const rootHealthbar = add([
 ]);
 
 onUpdate(() => {
+    debug.log(player.pos);
     if(get("menu").length > 0) return;
 
     if(playerHp <= 0) {
@@ -158,7 +193,9 @@ const player = add([
     anchor("center"),
     "player",
     health(playerHp),
-    timer(),
+    timer(), 
+    area(),
+    body(),
 ]);
 
 player.loop(1, () => {
