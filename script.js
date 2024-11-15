@@ -93,6 +93,70 @@ loadSprite("perkAll", "assets/PerkFrameRainbow.png", {
 
 layers(["background", "game", "foreground", "menues"], "game");
 
+
+scene("menu", () => {
+
+    onUpdate(() => setCursor("default"));
+
+    
+    
+
+
+    const start = add([
+        rect(240, 80, { radius: 8 }),
+        pos(center()),
+        area(),
+        scale(1),
+        anchor("center"),
+        outline(4),
+        color(0, 0, 0),
+    ]);
+
+    start.add([
+        text("Start"),
+        anchor("center"),
+        color(255, 255, 255),
+    ]);
+
+    start.onHoverUpdate(() => {
+        setCursor("pointer");
+    });
+
+    start.onClick(() => {
+       go("game");
+    })
+
+
+  add([
+    text("Controls:"),
+    pos(800, 680),
+  ])
+
+  add([
+    text("LEFT: A"),
+        pos(800, 740),
+    
+  ])
+  add([
+    text("RIGHT: D"),
+        pos(1000, 740),
+    
+  ])
+  
+  add([
+    text("UP: W"),
+        pos(800, 800),
+    
+  ])
+
+  add([
+    text("DOWN: S"),
+        pos(1000, 800),
+    
+  ])
+
+})
+
 scene("game", () => {
 
 add([
@@ -173,7 +237,7 @@ const rootHealthbar = add([
 ]);
 
 onUpdate(() => {
-    debug.log(rootHp)
+
     if(get("menu").length > 0) return;
 
     if(playerHp <= 0) {
@@ -286,7 +350,7 @@ function perkSelection() {
                 });
                 this.onClick(() => {
                     hpMod++;
-                    playerHp = 10 + (hpMod * 5)
+                    playerHp = 12 + (hpMod * 5)
                     add(player);
                     destroyAll("menu");
                 });
@@ -315,7 +379,7 @@ function perkSelection() {
                 });
                 this.onClick(() => {
                     speedMod++;
-                    playerHp = 50 + (hpMod * 25)
+                    playerHp = 10 + (hpMod * 5)
                     add(player);
                     destroyAll("menu");
                 });
@@ -344,7 +408,7 @@ function perkSelection() {
                 });
                 this.onClick(() => {
                     attackMod++;
-                    playerHp = 50 + (hpMod * 25)
+                    playerHp = 10 + (hpMod * 5)
                     add(player);
                     destroyAll("menu");
                 });
@@ -373,7 +437,7 @@ function perkSelection() {
                 });
                 this.onClick(() => {
                     pierceMod++;
-                    playerHp = 50 + (hpMod * 25)
+                    playerHp = 10 + (hpMod * 5)
                     add(player);
                     destroyAll("menu");
                 });
@@ -402,7 +466,7 @@ function perkSelection() {
                 });
                 this.onClick(() => {
                     defenseMod++;
-                    playerHp = 50 + (hpMod * 25)
+                    playerHp = 10 + (hpMod * 5)
                     add(player);
                     destroyAll("menu");
                 });
@@ -431,7 +495,7 @@ function perkSelection() {
                 });
                 this.onClick(() => {
                     bulletMod++;
-                    playerHp = 50 + (hpMod * 25)
+                    playerHp = 10 + (hpMod * 5)
                     add(player);
                     destroyAll("menu");
                 });
@@ -857,12 +921,11 @@ scene("lose", () => {
     ]);
 
     add([
-        text("PRESS SPACE TO RESTART"),
+        text("PRESS SPACE"),
         pos(width() / 2, height() / 2 + 50),
     ]);
 
-    // Press any key to go back
-    onKeyPress("space", () => go("game"));
+    onKeyPress("space", () => go("menu"));
 });
 
-go("game")
+go("menu")
