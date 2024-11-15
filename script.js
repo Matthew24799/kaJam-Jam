@@ -804,16 +804,49 @@ function spawnBlackAnt(px, py, id) {
 };
 
 
-spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
 
-loop(2, () => {
-    if(!root.exists() || !player.exists()) return;
+
+
+
+    function choas() {
+        loop(1, () => {
+            if(!root.exists() || !player.exists()) return;
+
+            spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+
+          });
+          wait(3, () => {
+             
+          
+          loop(5, () => {
+            if(!root.exists() || !player.exists()) return;
+            spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+            spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+            spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+        
+          });
+        })
+
+        wait(10, () => {
+            // after 1s 
+          
+          loop(20, () => {
+            if(!root.exists() || !player.exists()) return;
+            spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+            spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+            spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+           
+          });
+        });
+    }
+
     
-    spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
 
-    });
 
+      choas();
 })
+
+
 
 scene("lose", () => {
     add([
