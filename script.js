@@ -465,7 +465,7 @@ function perkSelection() {
                     pierceMod++;
                     defenseMod++;
                     sizeMod++;
-                    playerHp = 10 + (hpMod * 25)
+                    playerHp = 10 + (hpMod * 5)
                     add(player);
                     destroyAll("menu");
                 });
