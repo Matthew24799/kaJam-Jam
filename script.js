@@ -122,10 +122,10 @@ add([
     body({ isStatic: true }),
 ])
 
-let SPEED = 500;
-let bulletSpeed = 1500;
-let playerHp = 500;
-let rootHp = 1000;
+let SPEED = 200;
+let bulletSpeed = 700;
+let playerHp = 10;
+let rootHp = 100;
 let size = 90;
 let rootHealthsize = 150;
 let antNum = 0;
@@ -164,12 +164,11 @@ const rootHealthbar = add([
 ]);
 
 onUpdate(() => {
-    debug.log(player.pos);
+    debug.log(playerHp)
     if(get("menu").length > 0) return;
 
     if(playerHp <= 0) {
         destroy(player);
-        destroy(playerHealthbar);
         perkChoice();
     }
 
@@ -218,14 +217,26 @@ const playerHealthbar = player.add([
 
 
 
+onUpdate(() => {
+    displayHealth.text = `Health: ${Math.round(playerHp)}`;
+    displayMovementSpeed.text = `Movement: ${SPEED}`;
+    displayAttkSpeed.text = `AttackSpd: ${bulletSpeed}`;
+})
 
+const displayHealth = add([
+    text(`Health: ${playerHp}`),
+    pos(10,10),
+]) 
 
+const displayMovementSpeed = add([
+    text(`Movement: ${SPEED}`),
+    pos(300,10),
+])
 
-
-
-
-
-
+const displayAttkSpeed = add([
+    text(`AttackSpd: ${bulletSpeed}`),
+    pos(700,10),
+])
 
 function perkChoice() {
     
