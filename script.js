@@ -8,11 +8,13 @@ kaplay({
 
 
 loadSprite("player", "assets/flowr.png", {
-    sliceX: 4,
+    sliceX: 3,
 
     anims: {
         "idle": {from: 0, to: 0, loop: true, },
-        "walk": {from: 0, to: 2, loop: true},
+        "walk": {from: 1, to: 2,},
+        speed: 10,
+        loop: true,
     }
 })
 
@@ -132,7 +134,7 @@ add([
 let SPEED = 200;
 let bulletSpeed = 700;
 let playerHp = 10;
-let rootHp = 100;
+let rootHp = 50;
 let size = 90;
 let rootHealthsize = 150;
 let antNum = 0;
@@ -195,7 +197,7 @@ onUpdate(() => {
 const player = add([
     sprite("player"),
     pos(center()),
-    scale(0.8,0.8),
+    scale(0.5,0.5),
     anchor("center"),
     "player",
     health(playerHp),
@@ -212,30 +214,44 @@ player.loop(1, () => {
 });
 
 
+player.onUpdate(() => {
+    
+    camPos(player.worldPos());
+});
+
+camScale(1.5);
+
+
+
 onUpdate(() => {
     displayHealth.text = `Health: ${Math.round(playerHp)}`;
     displayMovementSpeed.text = `Movement: ${SPEED}`;
     displayAttkSpeed.text = `AttackSpd: ${bulletSpeed}`;
+    displayArmor.text = `Armor: ${defenseMod}`;
 })
 
 const displayHealth = add([
     text(`Health: ${playerHp}`),
     pos(250,10),
+    fixed(),
 ]) 
 
 const displayMovementSpeed = add([
     text(`Movement: ${SPEED}`),
     pos(600,10),
+    fixed(),
 ])
 
 const displayAttkSpeed = add([
     text(`AttackSpd: ${bulletSpeed}`),
     pos(1000,10),
+    fixed(),
 ])
 
 const displayArmor = add([
     text(`Armor: ${defenseMod}`),
     pos(1400, 10),
+    fixed(),
 ])
 
 function perkChoice() {
@@ -246,6 +262,7 @@ function perkChoice() {
         anchor("center"),
         layer("menues"),
         "menu",
+        fixed(),
     ]);
 
     perkMenu.play("appear");
@@ -283,6 +300,7 @@ function perkSelection() {
         area({scale: 0.7}),
         layer("menues"),
         "menu",
+        fixed(),
     ]);
 
     const perkSpeed = make([
@@ -311,6 +329,7 @@ function perkSelection() {
         area({scale: 0.7}),
         layer("menues"),
         "menu",
+        fixed(),
     ]);
 
     const perkAttack = make([
@@ -339,6 +358,7 @@ function perkSelection() {
         area({scale: 0.7}),
         layer("menues"),
         "menu",
+        fixed(),
     ]);
 
     const perkPierce = make([
@@ -367,6 +387,7 @@ function perkSelection() {
         area({scale: 0.7}),
         layer("menues"),
         "menu",
+        fixed(),
     ]);
 
     const perkDefense = make([
@@ -395,6 +416,7 @@ function perkSelection() {
         area({scale: 0.7}),
         layer("menues"),
         "menu",
+        fixed(),
     ]);
 
     const perkSize = make([
@@ -423,6 +445,7 @@ function perkSelection() {
         area({scale: 0.7}),
         layer("menues"),
         "menu",
+        fixed(),
     ]);
 
     const perkAll = make([
@@ -456,6 +479,7 @@ function perkSelection() {
         area({scale: 0.7}),
         layer("menues"),
         "menu",
+        fixed(),
     ]);
 
     const perks = [perkHp, perkSpeed, perkDefense, perkAttack, perkPierce, perkSize, perkAll]
@@ -704,7 +728,7 @@ function spawnBlackAnt(px, py, id) {
                         this.enterState("followPlayer");
                     } else {
                         const dir = root.pos.sub(this.pos).unit();
-                        this.move(dir.scale(200));
+                        this.move(dir.scale(440));
                     };
                 });
 
