@@ -8,15 +8,13 @@ kaplay({
 
 
 loadSprite("player", "assets/flowr.png", {
-    sliceX: 3,
-
+    sliceX: 4,
+    sliceY: 4,
     anims: {
-        "idle": {from: 0, to: 0, loop: true, },
-        "walk": {from: 1, to: 2,},
-        speed: 10,
-        loop: true,
-    }
-})
+        idle: {from: 8, to: 14, loop: true},
+        walk: {from: 0, to: 7, loop: true},
+    },
+});
 
 loadSprite("ant", "assets/Ant.png", {
     sliceX: 4,
@@ -269,9 +267,26 @@ onUpdate(() => {
 
 
     }
-  });
+});
 
 const player = add([
+    {
+        add() {
+            this.onStateEnter("moving", () => {
+                this.play("walk");
+            });
+
+            this.onStateUpdate("moving", () => {
+                if(isKeyDown(["a", "d", "s", "w"]) == false) {
+                    this.enterState("idle");
+                } else return;
+            });
+
+            this.onStateEnter("idle", () => {
+                this.play("idle");
+            });
+        },
+    },
     sprite("player"),
     pos(center()),
     scale(0.5,0.5),
@@ -281,10 +296,9 @@ const player = add([
     timer(), 
     area(),
     body(),
-    opacity(1)
+    opacity(1),
+    state("idle", ["idle", "moving"]),
 ]);
-
-player.play("idle");
 
 player.loop(1, () => {
     perkTimer++
@@ -705,7 +719,6 @@ function perkSelection() {
 
 
 
-
 player.onHurt(() => {
     player.opacity = 0.5
     wait(0.2, () => {
@@ -718,39 +731,34 @@ root.onHurt(() => {
 });
 
 onKeyDown("a", () => {
-
     player.move(-(SPEED + (speedMod * 100)), 0);
     player.flipX = false;
-    player.play("walk")
+    if(player.state !== "moving") {
+        player.enterState("moving");
+    } else return;
 });
 
 onKeyDown("d", () => {
     player.move((SPEED + (speedMod * 100)), 0);
     player.flipX = true;
-    player.play("walk")
+    if(player.state !== "moving") {
+        player.enterState("moving");
+    } else return;
 });
 
 onKeyDown("w", () => {
     player.move(0, -(SPEED + (speedMod * 100)));
-    player.play("walk")
+    if(player.state !== "moving") {
+        player.enterState("moving");
+    } else return;
 });
 
 onKeyDown("s", () => {
     player.move(0, (SPEED + (speedMod * 100)));
-    player.play("walk")
+    if(player.state !== "moving") {
+        player.enterState("moving");
+    } else return;
 });
-
-
-["a", "d", "w", "s"].forEach((key) => {
-    onKeyRelease(key, () => {
-        // Only reset to "idle" if player is not holding any of these keys
-        if (!isKeyDown("a") && !isKeyDown("d") && !isKeyDown("s") && !isKeyDown("w") ) {
-            player.play("idle");
-        }
-    });
-});
-
-
 
 const peaShooter = player.add([
     sprite("peaShooter"),
