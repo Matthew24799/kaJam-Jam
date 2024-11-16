@@ -94,32 +94,62 @@ loadSprite("perkAll", "assets/PerkFrameRainbow.png", {
     },
 });
 
+loadSprite("mainBackground", "assets/MainMenu.png", {
+    sliceX: 3,
+    sliceY: 2,
+    anims: {
+        play: { from: 0, to: 4, loop: true},
+    },
+});
+
+loadSprite("mainStart", "assets/MainMenuButton.png", {
+    sliceX: 3,
+    sliceY: 2,
+    anims: {
+        default: { from: 0, to: 2, loop: true},
+        hover: { from: 3, to: 5, loop: true},
+    },
+});
+
 layers(["background", "game", "foreground", "menues"], "game");
 
 
 scene("menu", () => {
 
-    onUpdate(() => setCursor("default"));
-
+    onUpdate(() => {
+        setCursor("default");
+    });
+        
     
     
+    const mainBack = add([
+        sprite("mainBackground"),
+        pos(center()),
+        anchor("center"),
+    ]);
 
+    mainBack.play("play");
 
     const start = add([
-        rect(240, 80, { radius: 8 }),
-        pos(center()),
+        {
+            add() {
+                this.onHoverEnd(() => {
+                    this.play("default");
+                });
+
+                this.onHover(() => {
+                    this.play("hover");
+                });
+            },
+        },
+        sprite("mainStart"),
+            scale(0.8),
+        pos(center().x, center().y + 250),
         area(),
-        scale(1),
         anchor("center"),
-        outline(4),
-        color(0, 0, 0),
     ]);
 
-    start.add([
-        text("Start"),
-        anchor("center"),
-        color(255, 255, 255),
-    ]);
+    start.play("default");
 
     start.onHoverUpdate(() => {
         setCursor("pointer");
@@ -127,44 +157,8 @@ scene("menu", () => {
 
     start.onClick(() => {
        go("game");
-    })
-
-
-  add([
-    text("Controls:"),
-    pos(800, 680),
-  ])
-
-  add([
-    text("LEFT: A"),
-        pos(800, 740),
-    
-  ])
-  add([
-    text("RIGHT: D"),
-        pos(1000, 740),
-    
-  ])
-  
-  add([
-    text("UP: W"),
-        pos(800, 800),
-    
-  ])
-
-  add([
-    text("DOWN: S"),
-        pos(1000, 800),
-    
-  ])
-
-  add([
-    text("SHOOT: LEFT MOUSE"),
-        pos(790, 870),
-    
-  ])
-
-})
+    });
+});
 
 scene("game", () => {
 
@@ -948,4 +942,4 @@ scene("lose", () => {
     onKeyPress("space", () => go("menu"));
 });
 
-go("menu")
+go("menu");
