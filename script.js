@@ -31,6 +31,26 @@ loadSprite("ant", "assets/Ant.png", {
     },
 });
 
+loadSprite("redAnt", "assets/RedAnt.png", {
+    sliceX: 4,
+    sliceY: 4,
+    anims: {
+        idle: { from: 0, to: 0, loop: true},
+        walk: { from: 11, to: 15, loop: true},
+        chomp: { from: 0, to: 10},
+    },
+});
+
+loadSprite("brownAnt", "assets/BrownAnt.png", {
+    sliceX: 4,
+    sliceY: 4,
+    anims: {
+        idle: { from: 0, to: 0, loop: true},
+        walk: { from: 11, to: 15, loop: true},
+        chomp: { from: 0, to: 10},
+    },
+});
+
 loadSprite("root","assets/Root.png", {
     sliceX: 10,
     anims: {
@@ -223,7 +243,7 @@ map.play("play");
 let SPEED = 200;
 let bulletSpeed = 700;
 let playerHp = 10;
-let rootHp = 50;
+let rootHp = 100;
 let size = 90;
 let rootHealthsize = 150;
 let antNum = 0;
@@ -337,6 +357,13 @@ const player = add([
             this.onStateEnter("idle", () => {
                 this.play("idle");
             });
+
+            onCollide("spit", "player", (spit) => {
+                playerHp = playerHp - ((10 + (perkTimer * 0.1)) - (defenseMod * 0.75));
+                player.hurt(((10 + (perkTimer * 0.1)) - (defenseMod * 0.75)));
+                this.fadeIn = 0.2
+                spit.hurt(1);
+            });
         },
     },
     sprite("player"),
@@ -355,6 +382,7 @@ const player = add([
 player.loop(1, () => {
     perkTimer++
 });
+
 
 
 player.onUpdate(() => {
@@ -377,23 +405,27 @@ const displayHealth = add([
     text(`Health: ${playerHp}`),
     pos(850,10),
     fixed(),
+    layer("foreground"),
 ]) 
 
 const displayMovementSpeed = add([
     text(`Movement: ${SPEED}`),
     pos(400,10),
     fixed(),
+    layer("foreground"),
 ])
 
 const displayArmor = add([
     text(`Armor: ${defenseMod}`),
     pos(1250, 10),
     fixed(),
+    layer("foreground"),
 ])
 const displayScore = add([
     text(`Score: ${score}`),
     pos(1500, 10),
-    fixed()
+    fixed(),
+    layer("foreground"),
 ])
 
 function perkChoice() {
@@ -777,10 +809,8 @@ function perkSelection() {
 
 
 player.onHurt(() => {
-    player.opacity = 0.5
-    wait(0.2, () => {
-        player.opacity = 1;
-      });
+    player.opacity = 1;
+    player.fadeIn = 0.2;
 });
 
 root.onHurt(() => {
@@ -788,7 +818,7 @@ root.onHurt(() => {
 });
 
 onKeyDown("a", () => {
-    player.move(-(SPEED + (speedMod * 100)), 0);
+    player.move(-(SPEED + (speedMod * 25)), 0);
     player.flipX = false;
     if(player.state !== "moving") {
         player.enterState("moving");
@@ -796,7 +826,7 @@ onKeyDown("a", () => {
 });
 
 onKeyDown("d", () => {
-    player.move((SPEED + (speedMod * 100)), 0);
+    player.move((SPEED + (speedMod * 25)), 0);
     player.flipX = true;
     if(player.state !== "moving") {
         player.enterState("moving");
@@ -804,14 +834,14 @@ onKeyDown("d", () => {
 });
 
 onKeyDown("w", () => {
-    player.move(0, -(SPEED + (speedMod * 100)));
+    player.move(0, -(SPEED + (speedMod * 25)));
     if(player.state !== "moving") {
         player.enterState("moving");
     } else return;
 });
 
 onKeyDown("s", () => {
-    player.move(0, (SPEED + (speedMod * 100)));
+    player.move(0, (SPEED + (speedMod * 25)));
     if(player.state !== "moving") {
         player.enterState("moving");
     } else return;
@@ -819,7 +849,7 @@ onKeyDown("s", () => {
 
 const peaShooter = player.add([
     sprite("peaShooter"),
-    anchor(vec2(-2,0)),
+    anchor(vec2(-2, 0)),
     rotate(0),
     "player",
 ]);
@@ -869,11 +899,9 @@ function spawnBlackAnt(px, py, id) {
                 
                     if(this.pos.dist(root.pos) < 25) {
                         this.enterState("attackRoot");
-                    } else if(this.pos.dist(player.pos) < 250) {
-                        this.enterState("followPlayer");
                     } else {
                         const dir = root.pos.sub(this.pos).unit();
-                        this.move(dir.scale(440));
+                        this.move(dir.scale(500));
                     };
                 });
 
@@ -881,48 +909,22 @@ function spawnBlackAnt(px, py, id) {
                     if(!root.exists() || !player.exists() || !this.exists()) return;
 
                     this.play("chomp");
-                    wait(0.5, () => {
-                        
+                    wait(0.65, () => {
+                        if(!this.exists()) {
+                            return;
+                        } else {
                         root.hurt(1);
                         rootHp = rootHp - 1
                         wait(3, () => {
                             this.enterState("attackRoot");
                         });
+                        };
                     });
                 });
-
-                this.onStateEnter("followPlayer", () => {
-                    this.play("walk");
-                });
-
-                this.onStateUpdate("followPlayer", () => {
-                    if(!root.exists() || !player.exists()) return;
-                    
-                    if(this.pos.dist(player.pos) > 300) {
-                        this.enterState("move");
-                    } else if(this.pos.dist(player.pos) < 25) {
-                        this.enterState("attackPlayer");
-                    } else {
-                        const dir = player.pos.sub(this.pos).unit();
-                        this.move(dir.scale(250))
-                    };
-                });
-
-                this.onStateEnter("attackPlayer", () => {
-                    if(!root.exists() || !player.exists() || !this.exists()) return;
-
-                    this.play("chomp");
-                    wait(0.5, () => {
-                        playerHp = playerHp - (5 - (defenseMod * 0.5));
-                        player.hurt((5 - (defenseMod * 0.5)));
-                        wait(0.5, () => {
-                            this.enterState("followPlayer");
-                        });
-                    });
-                })
 
                 onCollide("pea", id, (pea) => {
                     this.hurt(5 + (attackMod * 5));
+                    this.opacity = 1;
                     this.fadeIn(0.2);
                     pea.hurt(1);
                 });
@@ -942,8 +944,8 @@ function spawnBlackAnt(px, py, id) {
         pos(px, py),
         anchor("center"),
         area(),
-        health(15),
-        state("move", ["attackRoot", "followPlayer", "attackPlayer", "move"]),
+        health(20),
+        state("move", ["attackRoot", "move"]),
         "ant",
         id,
     ]);
@@ -952,12 +954,189 @@ function spawnBlackAnt(px, py, id) {
     return blackAnt;
 };
 
+function spawnRedAnt(px, py, id) {
+    const redAnt = add([
+        {
+            add() {
+                this.onStateEnter("move", () => {
+                    this.play("walk");
+                });
+
+                this.onStateUpdate("move", () => {
+                    if(!root.exists() || !player.exists()) return;
+                
+                    if(this.pos.dist(player.pos) < 25) {
+                        this.enterState("attackPlayer");
+                    } else {
+                        const dir = player.pos.sub(this.pos).unit();
+                        this.move(dir.scale(600));
+                    };
+                });
+
+                this.onStateEnter("attackPlayer", () => {
+                    if(!root.exists() || !player.exists() || !this.exists()) return;
+
+                    this.play("chomp");
+                    wait(0.3, () => {
+                        if(!this.exists()) {
+                            return;
+                        } else if(this.pos.dist(player.pos) < 50) {
+                        playerHp = playerHp - ((5 + (perkTimer * 0.1)) - (defenseMod * 0.75));
+                        player.hurt(((5 + (perkTimer * 0.1)) - (defenseMod * 0.5)));
+                        wait(0.5, () => {
+                            this.enterState("move");
+                        });
+                        } else {
+                            wait(0.5, () => {
+                                this.enterState("move");
+                            });
+                        };
+                    });
+                })
+
+                onCollide("pea", id, (pea) => {
+                    this.hurt(5 + (attackMod * 2.5));
+                    this.opacity = 1;
+                    this.fadeIn(0.2);
+                    pea.hurt(1);
+                });
+
+                this.onDeath(() => {
+                    play("anyDying", {
+                        volume: 0.2,
+                    })
+                    destroy(this);
+                    return;
+                });
+            },
+        },
+        sprite("redAnt", {
+            animSpeed: 2.5,
+        }),
+            scale(0.15, 0.15),
+            opacity(1),
+        pos(px, py),
+        anchor("center"),
+        area(),
+        health(15),
+        state("move", ["attackPlayer", "move"]),
+        "ant",
+        id,
+    ]);
+    antNum++
+    antId = antNum.toString();
+    return redAnt;
+};
+
+function spawnSpit(p, d) {
+    add([
+        {
+            add() {
+                onCollide("pea", "spit", (pea) => {
+                    this.hurt(1);
+                    pea.hurt(1);
+                });
+
+                this.onDeath(() => {
+                    destroy(this)
+                });
+
+                this.onUpdate(() => {
+                    if(this.pos.dist(root.pos) < 10) {
+                        this.hurt(1);
+                        rootHp = rootHp - 5;
+                        root.hurt(5);
+                    };
+                });
+            },
+        },
+        circle((15)),
+        pos(p),
+        color(BLUE),
+        anchor("center"),
+        "spit",
+        area(),
+        health(1),
+        move(d, 500),
+    ]); 
+};
+
+function spawnBrownAnt(px, py, id) {
+    const brownAnt = add([
+        {
+            add() {
+                const d = get(id);
+
+                this.onStateEnter("attackRoot", () => {
+                    if(!root.exists() || !player.exists() || !this.exists()) return;
+                    this.play("chomp");
+                    wait(0.8, () => {
+                        if(!this.exists()) {
+                            return;
+                        } else {
+                            spawnSpit(vec2(this.pos.x + 15, this.pos.y), root.pos.sub(vec2(d[0].pos.x + 15, d[0].pos.y)).angle());
+                            wait(4, () => {
+                                this.enterState("attackPlayer");
+                            });
+                        };
+                    });
+                });
+
+                this.onStateEnter("attackPlayer", () => {
+                    if(!root.exists() || !player.exists() || !this.exists()) return;
+                    this.play("chomp");
+                    wait(0.8, () => {
+                        if(!this.exists()) {
+                            return;
+                        } else {
+                            spawnSpit(vec2(this.pos.x + 15, this.pos.y), player.pos.sub(vec2(d[0].pos.x + 15, d[0].pos.y)).angle());
+                            wait(4, () => {
+                                this.enterState("attackRoot");
+                            });
+                        };
+                    });
+                })
+
+                onCollide("pea", id, (pea) => {
+                    this.hurt(5 + (attackMod * 5));
+                    this.opacity = 1;
+                    this.fadeIn(0.2);
+                    pea.hurt(1);
+                });
+
+                this.onDeath(() => {
+                    play("anyDying", {
+                        volume: 0.2,
+                    })
+                    destroy(this);
+                    return;
+                });
+            },
+        },
+        sprite("brownAnt", {
+            animSpeed: 0.8,
+        }),
+            scale(0.5, 0.5),
+            opacity(1),
+        pos(px, py),
+        anchor("center"),
+        area(),
+        health(100),
+        state("attackPlayer", ["attackPlayer", "attackRoot"]),
+        "ant",
+        id,
+    ]);
+    antNum++
+    antId = antNum.toString();
+    return brownAnt;
+};
 
 
 
 
 
-    function choas() {
+
+    function chaos() {
         loop(1, () => {
             if(!root.exists() || !player.exists()) return;
 
@@ -969,9 +1148,9 @@ function spawnBlackAnt(px, py, id) {
           
           loop(5, () => {
             if(!root.exists() || !player.exists()) return;
-            spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
-            spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
-            spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+            spawnRedAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+            spawnRedAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+            spawnRedAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
         
           });
         })
@@ -982,8 +1161,8 @@ function spawnBlackAnt(px, py, id) {
           loop(20, () => {
             if(!root.exists() || !player.exists()) return;
             spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
-            spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
-            spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+            spawnRedAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+            spawnBrownAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
            
           });
         });
@@ -992,7 +1171,7 @@ function spawnBlackAnt(px, py, id) {
     
 
 
-      choas();
+      chaos();
 })
 
 
