@@ -3,7 +3,7 @@ import kaplay from "https://unpkg.com/kaplay@3001.0.0-alpha.20/dist/kaplay.mjs";
 kaplay({
     width: 1920,
     height: 1080,
-    background: [74, 48, 82],
+    background: [0, 0, 0],
 })
 let score = 0;
 
@@ -116,6 +116,14 @@ loadSprite("mainStart", "assets/MainMenuButton.png", {
     },
 });
 
+loadSprite("map", "assets/Map.png", {
+    sliceX: 2,
+    sliceY: 2,
+    anims: {
+        play: { from: 0, to: 2, loop: true},
+    },
+});
+
 layers(["background", "game", "foreground", "menues"], "game");
 
 
@@ -174,7 +182,7 @@ add([
     area(),
     body(),
     body({ isStatic: true }),
-])
+]);
 
 add([
     rect(1,height()),
@@ -183,7 +191,7 @@ add([
     area(),
     body(),
     body({ isStatic: true }),
-])
+]);
 
 add([
     rect(1,height()),
@@ -192,7 +200,7 @@ add([
     area(),
     body(),
     body({ isStatic: true }),
-])
+]);
 
 add([
     rect(width(),1),
@@ -201,7 +209,16 @@ add([
     area(),
     body(),
     body({ isStatic: true }),
-])
+]);
+
+const map = add([
+    sprite("map"),
+    pos(center()),
+    anchor("center"),
+    layer("background"),
+]);
+
+map.play("play");
 
 let SPEED = 200;
 let bulletSpeed = 700;
@@ -233,11 +250,32 @@ loop(1, () => {
 const root = add([
     sprite("root"),
     pos(center()),
-    anchor("center"),
+    anchor("bot"),
     "root",
-   health(rootHp),
-   area(),
+    health(rootHp),
+    area(),
+    layer("foreground")
    
+]);
+
+const rootHitbox1 = add([
+    rect(300, 200),
+    pos(center().x, center().y - 300),
+    anchor("bot"),
+    area(),
+    body(),
+    body({ isStatic: true}),
+    opacity(0),
+]);
+
+const rootHitbox2 = add([
+    rect(100, 100),
+    pos(center().x, center().y - 200),
+    anchor("bot"),
+    area(),
+    body(),
+    body({ isStatic: true}),
+    opacity(0),
 ]);
 
 root.play("pulse");
@@ -253,7 +291,8 @@ const rootHealthbar = add([
         set(hp) {
             this.width = rootHealthsize * hp / this.max;
         }
-    }
+    },
+    layer("menues"),
 ]);
 
 onUpdate(() => {
@@ -301,7 +340,7 @@ const player = add([
         },
     },
     sprite("player"),
-    pos(center()),
+    pos(center().x, center().y + 200),
     scale(0.5,0.5),
     anchor("center"),
     "player",
