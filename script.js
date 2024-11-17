@@ -3,7 +3,7 @@ import kaplay from "https://unpkg.com/kaplay@3001.0.0-alpha.20/dist/kaplay.mjs";
 kaplay({
     width: 1920,
     height: 1080,
-    background: [74, 48, 82],
+    background: [0, 0, 0],
 })
 
 
@@ -111,6 +111,14 @@ loadSprite("mainStart", "assets/MainMenuButton.png", {
     },
 });
 
+loadSprite("map", "assets/Map.png", {
+    sliceX: 2,
+    sliceY: 2,
+    anims: {
+        play: { from: 0, to: 2, loop: true},
+    },
+});
+
 layers(["background", "game", "foreground", "menues"], "game");
 
 
@@ -169,7 +177,7 @@ add([
     area(),
     body(),
     body({ isStatic: true }),
-])
+]);
 
 add([
     rect(1,height()),
@@ -178,7 +186,7 @@ add([
     area(),
     body(),
     body({ isStatic: true }),
-])
+]);
 
 add([
     rect(1,height()),
@@ -187,7 +195,7 @@ add([
     area(),
     body(),
     body({ isStatic: true }),
-])
+]);
 
 add([
     rect(width(),1),
@@ -196,7 +204,16 @@ add([
     area(),
     body(),
     body({ isStatic: true }),
-])
+]);
+
+const map = add([
+    sprite("map"),
+    pos(center()),
+    anchor("center"),
+    layer("background"),
+]);
+
+map.play("play");
 
 let SPEED = 200;
 let bulletSpeed = 700;
