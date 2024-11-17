@@ -31,7 +31,7 @@ loadSprite("ant", "assets/Ant.png", {
     },
 });
 
-loadSprite("redAnt", "assets/Ant.png", {
+loadSprite("redAnt", "assets/RedAnt.png", {
     sliceX: 4,
     sliceY: 4,
     anims: {
@@ -367,6 +367,7 @@ player.loop(1, () => {
 });
 
 
+
 player.onUpdate(() => {
     
     camPos(player.worldPos());
@@ -387,23 +388,27 @@ const displayHealth = add([
     text(`Health: ${playerHp}`),
     pos(850,10),
     fixed(),
+    layer("foreground"),
 ]) 
 
 const displayMovementSpeed = add([
     text(`Movement: ${SPEED}`),
     pos(400,10),
     fixed(),
+    layer("foreground"),
 ])
 
 const displayArmor = add([
     text(`Armor: ${defenseMod}`),
     pos(1250, 10),
     fixed(),
+    layer("foreground"),
 ])
 const displayScore = add([
     text(`Score: ${score}`),
     pos(1500, 10),
-    fixed()
+    fixed(),
+    layer("foreground"),
 ])
 
 function perkChoice() {
@@ -879,11 +884,9 @@ function spawnBlackAnt(px, py, id) {
                 
                     if(this.pos.dist(root.pos) < 25) {
                         this.enterState("attackRoot");
-                    } else if(this.pos.dist(player.pos) < 250) {
-                        this.enterState("followPlayer");
                     } else {
                         const dir = root.pos.sub(this.pos).unit();
-                        this.move(dir.scale(440));
+                        this.move(dir.scale(500));
                     };
                 });
 
@@ -891,45 +894,18 @@ function spawnBlackAnt(px, py, id) {
                     if(!root.exists() || !player.exists() || !this.exists()) return;
 
                     this.play("chomp");
-                    wait(0.5, () => {
-                        
+                    wait(0.65, () => {
+                        if(!this.exists()) {
+                            return;
+                        } else {
                         root.hurt(1);
                         rootHp = rootHp - 1
                         wait(3, () => {
                             this.enterState("attackRoot");
                         });
+                        };
                     });
                 });
-
-                this.onStateEnter("followPlayer", () => {
-                    this.play("walk");
-                });
-
-                this.onStateUpdate("followPlayer", () => {
-                    if(!root.exists() || !player.exists()) return;
-                    
-                    if(this.pos.dist(player.pos) > 300) {
-                        this.enterState("move");
-                    } else if(this.pos.dist(player.pos) < 25) {
-                        this.enterState("attackPlayer");
-                    } else {
-                        const dir = player.pos.sub(this.pos).unit();
-                        this.move(dir.scale(250))
-                    };
-                });
-
-                this.onStateEnter("attackPlayer", () => {
-                    if(!root.exists() || !player.exists() || !this.exists()) return;
-
-                    this.play("chomp");
-                    wait(0.5, () => {
-                        playerHp = playerHp - (5 - (defenseMod * 0.5));
-                        player.hurt((5 - (defenseMod * 0.5)));
-                        wait(0.5, () => {
-                            this.enterState("followPlayer");
-                        });
-                    });
-                })
 
                 onCollide("pea", id, (pea) => {
                     this.hurt(5 + (attackMod * 5));
@@ -952,14 +928,87 @@ function spawnBlackAnt(px, py, id) {
         pos(px, py),
         anchor("center"),
         area(),
-        health(15),
-        state("move", ["attackRoot", "followPlayer", "attackPlayer", "move"]),
+        health(20),
+        state("move", ["attackRoot", "move"]),
         "ant",
         id,
     ]);
     antNum++
     antId = antNum.toString();
     return blackAnt;
+};
+
+function spawnRedAnt(px, py, id) {
+    const redAnt = add([
+        {
+            add() {
+                this.onStateEnter("move", () => {
+                    this.play("walk");
+                });
+
+                this.onStateUpdate("move", () => {
+                    if(!root.exists() || !player.exists()) return;
+                
+                    if(this.pos.dist(player.pos) < 25) {
+                        this.enterState("attackPlayer");
+                    } else {
+                        const dir = player.pos.sub(this.pos).unit();
+                        this.move(dir.scale(600));
+                    };
+                });
+
+                this.onStateEnter("attackPlayer", () => {
+                    if(!root.exists() || !player.exists() || !this.exists()) return;
+
+                    this.play("chomp");
+                    wait(0.3, () => {
+                        if(!this.exists()) {
+                            return;
+                        } else if(this.pos.dist(player.pos) < 50) {
+                        playerHp = playerHp - ((5 + (perkTimer * 0.1)) - (defenseMod * 0.75));
+                        player.hurt(((5 + (perkTimer * 0.1)) - (defenseMod * 0.5)));
+                        wait(0.5, () => {
+                            this.enterState("move");
+                        });
+                        } else {
+                            wait(0.5, () => {
+                                this.enterState("move");
+                            });
+                        };
+                    });
+                })
+
+                onCollide("pea", id, (pea) => {
+                    this.hurt(5 + (attackMod * 2.5));
+                    this.fadeIn(0.2);
+                    pea.hurt(1);
+                });
+
+                this.onDeath(() => {
+                    play("anyDying", {
+                        volume: 0.2,
+                    })
+                    destroy(this);
+                    return;
+                });
+            },
+        },
+        sprite("redAnt", {
+            animSpeed: 2.5,
+        }),
+            scale(0.15, 0.15),
+            opacity(1),
+        pos(px, py),
+        anchor("center"),
+        area(),
+        health(15),
+        state("move", ["attackPlayer", "move"]),
+        "ant",
+        id,
+    ]);
+    antNum++
+    antId = antNum.toString();
+    return redAnt;
 };
 
 
@@ -980,7 +1029,7 @@ function spawnBlackAnt(px, py, id) {
           loop(5, () => {
             if(!root.exists() || !player.exists()) return;
             spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
-            spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+            spawnRedAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
             spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
         
           });
@@ -991,9 +1040,9 @@ function spawnBlackAnt(px, py, id) {
           
           loop(20, () => {
             if(!root.exists() || !player.exists()) return;
+            spawnRedAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
             spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
-            spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
-            spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+            spawnRedAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
            
           });
         });
