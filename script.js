@@ -399,7 +399,9 @@ const displayScore = add([
 function perkChoice() {
     
     const perkMenu = add([
-        sprite("perkBackground"),
+        sprite("perkBackground", {
+            animSpeed: 2,
+        }),
         pos(center()),
         anchor("center"),
         layer("menues"),
@@ -407,9 +409,7 @@ function perkChoice() {
         fixed(),
     ]);
 
-    perkMenu.play("appear", {
-        animSpeed: 1.25,
-    });
+    perkMenu.play("appear");
     play("levelUp", {
         volume: 0.2,
         speed: 1.5,
@@ -612,7 +612,7 @@ function perkSelection() {
                     pierceMod++;
                     defenseMod++;
                     sizeMod++;
-                    playerHp = 10 + (hpMod * 10)
+                    playerHp = 10 + (hpMod * 10);
                     add(player);
                     destroyAll("menu");
                 });
