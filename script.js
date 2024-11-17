@@ -6,6 +6,7 @@ kaplay({
     background: [74, 48, 82],
 })
 
+loadSound("bullet", "assets/bullet.wav")
 
 loadSprite("player", "assets/flowr.png", {
     sliceX: 4,
@@ -787,6 +788,9 @@ function spawnPea(p) {
 onMousePress(() => {
     if(playerHp > 0) {
    spawnPea(player.pos);
+   play("bullet", {
+    volume: 0.5,
+   })
     }
 })
  
