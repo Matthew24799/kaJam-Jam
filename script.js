@@ -7,7 +7,7 @@ kaplay({
 })
 let score = 0;
 
-loadSound("bullet", "assets/bullet.wav")
+loadSound("bullet", "assets/Bullet.wav")
 loadSound("anyDying", "assets/antDying.wav")
 loadSound("lose", "assets/lose.wav")
 loadSound("levelUp", "assets/levelUp.wav")
