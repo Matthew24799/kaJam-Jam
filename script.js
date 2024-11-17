@@ -242,7 +242,7 @@ let perkTimer = 0
 
 loop(1, () => {
     score = score + 10
-    debug.log(score);
+    
 })
 
 
@@ -311,7 +311,7 @@ onUpdate(() => {
         destroy(root);
         wait(1, () => {
             play("lose", {
-                volume: 4,
+                volume: 0.5,
             })
             destroy(rootHealthbar);
             go("lose");
@@ -849,7 +849,7 @@ onMousePress(() => {
     if(playerHp > 0) {
    spawnPea(player.pos);
    play("bullet", {
-    volume: 0.3,
+    volume: 0.4,
    })
     }
 })
