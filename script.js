@@ -7,6 +7,9 @@ kaplay({
 })
 
 loadSound("bullet", "assets/bullet.wav")
+loadSound("anyDying", "assets/antDying.wav")
+loadSound("lose", "assets/lose.wav")
+loadSound("levelUp", "assets/levelUp.wav")
 
 loadSprite("player", "assets/flowr.png", {
     sliceX: 4,
@@ -256,6 +259,9 @@ onUpdate(() => {
     if (rootHp <= 0) {
         destroy(root);
         wait(1, () => {
+            play("lose", {
+                volume: 4,
+            })
             destroy(rootHealthbar);
             go("lose");
         })
@@ -352,6 +358,10 @@ function perkChoice() {
     ]);
 
     perkMenu.play("appear");
+    play("levelUp", {
+        volume: 0.2,
+        speed: 1.5
+    })
     perkMenu.onAnimEnd((appear) => {
         perkMenu.play("remain");
         perkSelection();
@@ -789,7 +799,7 @@ onMousePress(() => {
     if(playerHp > 0) {
    spawnPea(player.pos);
    play("bullet", {
-    volume: 0.5,
+    volume: 0.3,
    })
     }
 })
@@ -866,6 +876,9 @@ function spawnBlackAnt(px, py, id) {
                 });
 
                 this.onDeath(() => {
+                    play("anyDying", {
+                        volume: 0.2,
+                    })
                     destroy(this);
                     return;
                 });
