@@ -5,6 +5,7 @@ kaplay({
     height: 1080,
     background: [74, 48, 82],
 })
+let score = 0;
 
 loadSound("bullet", "assets/bullet.wav")
 loadSound("anyDying", "assets/antDying.wav")
@@ -218,6 +219,17 @@ let bulletMod = 0
 let defenseMod = 0
 let perkTimer = 0
 
+
+
+
+
+loop(1, () => {
+    score = score + 10
+    debug.log(score);
+})
+
+
+
 const root = add([
     sprite("root"),
     pos(center()),
@@ -319,6 +331,7 @@ onUpdate(() => {
     displayHealth.text = `Health: ${Math.round(playerHp)}`;
     displayMovementSpeed.text = `Movement: ${SPEED}`;
     displayArmor.text = `Armor: ${defenseMod}`;
+    displayScore.text = `Score: ${score}`;
 })
 
 const displayHealth = add([
@@ -337,6 +350,11 @@ const displayArmor = add([
     text(`Armor: ${defenseMod}`),
     pos(1250, 10),
     fixed(),
+])
+const displayScore = add([
+    text(`Score: ${score}`),
+    pos(1500, 10),
+    fixed()
 ])
 
 function perkChoice() {
@@ -374,7 +392,7 @@ function perkSelection() {
                 });
                 this.onClick(() => {
                     hpMod++;
-                    playerHp = 12 + (hpMod * 5)
+                    playerHp = 15 + (hpMod * 10)
                     add(player);
                     destroyAll("menu");
                 });
@@ -945,9 +963,21 @@ scene("lose", () => {
     ]);
 
     add([
-        text("PRESS SPACE"),
+        text(`SCORE: ${score}`),
         pos(width() / 2, height() / 2 + 50),
+        scale(2)
     ]);
+
+    score = 0;
+
+
+    add([
+        text("PRESS SPACE"),
+        pos(width() / 2, height() / 2 + 150),
+    ]);
+
+
+
 
     onKeyPress("space", () => go("menu"));
 });
