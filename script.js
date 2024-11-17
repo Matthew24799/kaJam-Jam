@@ -31,6 +31,16 @@ loadSprite("ant", "assets/Ant.png", {
     },
 });
 
+loadSprite("redAnt", "assets/Ant.png", {
+    sliceX: 4,
+    sliceY: 4,
+    anims: {
+        idle: { from: 0, to: 0, loop: true},
+        walk: { from: 11, to: 15, loop: true},
+        chomp: { from: 0, to: 10},
+    },
+});
+
 loadSprite("root","assets/Root.png", {
     sliceX: 10,
     anims: {
