@@ -318,31 +318,24 @@ camScale(1.5);
 onUpdate(() => {
     displayHealth.text = `Health: ${Math.round(playerHp)}`;
     displayMovementSpeed.text = `Movement: ${SPEED}`;
-    displayAttkSpeed.text = `AttackSpd: ${bulletSpeed}`;
     displayArmor.text = `Armor: ${defenseMod}`;
 })
 
 const displayHealth = add([
     text(`Health: ${playerHp}`),
-    pos(250,10),
+    pos(850,10),
     fixed(),
 ]) 
 
 const displayMovementSpeed = add([
     text(`Movement: ${SPEED}`),
-    pos(600,10),
-    fixed(),
-])
-
-const displayAttkSpeed = add([
-    text(`AttackSpd: ${bulletSpeed}`),
-    pos(1000,10),
+    pos(400,10),
     fixed(),
 ])
 
 const displayArmor = add([
     text(`Armor: ${defenseMod}`),
-    pos(1400, 10),
+    pos(1250, 10),
     fixed(),
 ])
 
