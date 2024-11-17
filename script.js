@@ -407,11 +407,13 @@ function perkChoice() {
         fixed(),
     ]);
 
-    perkMenu.play("appear");
+    perkMenu.play("appear", {
+        animSpeed: 1.25,
+    });
     play("levelUp", {
         volume: 0.2,
-        speed: 1.5
-    })
+        speed: 1.5,
+    });
     perkMenu.onAnimEnd((appear) => {
         perkMenu.play("remain");
         perkSelection();
@@ -431,7 +433,7 @@ function perkSelection() {
                 });
                 this.onClick(() => {
                     hpMod++;
-                    playerHp = 15 + (hpMod * 10)
+                    playerHp = 15 + (hpMod * 10);
                     add(player);
                     destroyAll("menu");
                 });
@@ -460,7 +462,7 @@ function perkSelection() {
                 });
                 this.onClick(() => {
                     speedMod++;
-                    playerHp = 10 + (hpMod * 5)
+                    playerHp = 10 + (hpMod * 10);
                     add(player);
                     destroyAll("menu");
                 });
@@ -489,7 +491,7 @@ function perkSelection() {
                 });
                 this.onClick(() => {
                     attackMod++;
-                    playerHp = 10 + (hpMod * 5)
+                    playerHp = 10 + (hpMod * 10);
                     add(player);
                     destroyAll("menu");
                 });
@@ -518,7 +520,7 @@ function perkSelection() {
                 });
                 this.onClick(() => {
                     pierceMod++;
-                    playerHp = 10 + (hpMod * 5)
+                    playerHp = 10 + (hpMod * 10);
                     add(player);
                     destroyAll("menu");
                 });
@@ -547,7 +549,7 @@ function perkSelection() {
                 });
                 this.onClick(() => {
                     defenseMod++;
-                    playerHp = 10 + (hpMod * 5)
+                    playerHp = 10 + (hpMod * 10);
                     add(player);
                     destroyAll("menu");
                 });
@@ -576,7 +578,7 @@ function perkSelection() {
                 });
                 this.onClick(() => {
                     bulletMod++;
-                    playerHp = 10 + (hpMod * 5)
+                    playerHp = 10 + (hpMod * 10);
                     add(player);
                     destroyAll("menu");
                 });
@@ -610,7 +612,7 @@ function perkSelection() {
                     pierceMod++;
                     defenseMod++;
                     sizeMod++;
-                    playerHp = 10 + (hpMod * 5)
+                    playerHp = 10 + (hpMod * 10)
                     add(player);
                     destroyAll("menu");
                 });
