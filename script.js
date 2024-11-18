@@ -934,6 +934,10 @@ function spawnBlackAnt(px, py, id) {
                     play("anyDying", {
                         volume: 0.2,
                     })
+
+                    if(rand(10) < 5) {
+                        rootHp = rootHp + 10
+                    }
                     destroy(this);
                     return;
                 });
