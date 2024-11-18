@@ -12,6 +12,8 @@ loadSound("anyDying", "assets/antDying.wav")
 loadSound("lose", "assets/lose.wav")
 loadSound("levelUp", "assets/levelUp.wav")
 
+
+
 loadSprite("flowerGun", "assets/flowerGun.png");
 loadSprite("flowerBullet", "assets/pollen ball.png", {
     sliceX: 2,
@@ -201,6 +203,8 @@ scene("menu", () => {
 
 scene("game", () => {
 
+    
+
 add([
     rect(width(),1),
     pos(0,0),
@@ -235,6 +239,34 @@ add([
     area(),
     body(),
     body({ isStatic: true }),
+]);
+
+add([
+    text("PROTECT", { size: 160 }),
+    pos(width() / 2, height() / 2),
+    anchor("center"),
+    opacity(),
+    lifespan(1),
+    fixed(),
+]);
+
+add([
+    text("THE", { size: 80 }),
+    pos(width() / 2, height() / 2 + 100),
+    anchor("center"),
+    opacity(),
+    lifespan(2),
+    fixed(),
+]);
+
+add([
+    text("ROOT", { size: 120 }),
+    pos(width() / 2, height() / 2 + 400),
+    anchor("center"),
+    opacity(),
+    lifespan(4),
+
+    fixed(),
 ]);
 
 const map = add([
@@ -1145,7 +1177,7 @@ function blackAntSPawn() {
 
 function moreblackants() {
     wait(20, () => {
-        loop(3, () => {
+        loop(4, () => {
             spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
         })
     })
@@ -1154,7 +1186,7 @@ function moreblackants() {
 
 function moreredAnt() {
     wait(20, () => {
-        loop(1.5, () => {
+        loop(3, () => {
         spawnRedAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
         })
     })
@@ -1175,12 +1207,16 @@ function brownAntSpawn() {
     })
 }
 
+wait(5, () => {
+
 
 blackAntSPawn()
 redAnt()
 moreblackants()
 brownAntSpawn()
 moreredAnt()
+})
+
 })
 
 
