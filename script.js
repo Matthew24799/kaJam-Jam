@@ -391,12 +391,6 @@ player.loop(1, () => {
 
 
 
-player.onUpdate(() => {
-    
-    camPos(player.worldPos());
-});
-
-camScale(1.5);
 
 
 
@@ -1139,10 +1133,41 @@ function spawnBrownAnt(px, py, id) {
 };
 
 
+function blackAntSPawn() {
+    loop(1.5, () => {
+        spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId)
+
+    })
+}
+
+function moreblackants() {
+    wait(20, () => {
+        loop(3, () => {
+            spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+        })
+    })
+    
+}
+
+function redAnt() {
+    loop(2, () => {
+        spawnRedAnt(rand(100, width() - 100), rand(100, height() - 100), antId)
+    })
+}
+
+function brownAntSpawn() {
+    wait(30, () => {
+        loop(7, () => {
+            spawnBrownAnt(rand(100, width() - 100), rand(100, height() - 100), antId)
+        })
+    })
+}
 
 
-
-
+blackAntSPawn()
+redAnt()
+moreblackants()
+brownAntSpawn()
 })
 
 
