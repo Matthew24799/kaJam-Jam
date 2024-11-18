@@ -396,7 +396,7 @@ player.loop(1, () => {
 
 onUpdate(() => {
     displayHealth.text = `Health: ${Math.round(playerHp)}`;
-    displayMovementSpeed.text = `Movement: ${SPEED}`;
+    displayMovementSpeed.text = `Movement: ${SPEED + speedMod}`;
     displayArmor.text = `Armor: ${defenseMod}`;
     displayScore.text = `Score: ${score}`;
 })
@@ -409,7 +409,7 @@ const displayHealth = add([
 ]) 
 
 const displayMovementSpeed = add([
-    text(`Movement: ${SPEED}`),
+    text(`Movement: ${SPEED + speedMod}`),
     pos(400,10),
     fixed(),
     layer("foreground"),
