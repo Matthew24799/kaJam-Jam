@@ -493,7 +493,8 @@ function perkSelection() {
                     this.use(scale(0.75, 0.75));
                 });
                 this.onClick(() => {
-                    speedMod++;
+                    speedMod++
+                    SPEED = SPEED + speedMod;
                     playerHp = 10 + (hpMod * 10);
                     add(player);
                     destroyAll("menu");
@@ -609,7 +610,7 @@ function perkSelection() {
                     this.use(scale(0.75, 0.75));
                 });
                 this.onClick(() => {
-                    bulletMod++;
+                    bulletMod = bulletMod + 0.1;
                     playerHp = 10 + (hpMod * 10);
                     add(player);
                     destroyAll("menu");
@@ -666,7 +667,7 @@ function perkSelection() {
 
     console.log(perkTimer);
 
-    if(perkTimer <= 30) {
+    if(perkTimer <= 4) {
         if(rand(1, 100) <= 80) {
             let perk1 = Math.round(rand(0,2));
             add(perks[perk1]);
@@ -685,7 +686,7 @@ function perkSelection() {
             perks[perk2].play("play");
         };
 
-    } else if(30 < perkTimer <= 60) {
+    } else if(30 < perkTimer <= 5) {
         let i = rand(1, 100)
         if(i <= 50) {
             let perk1 = Math.round(rand(0,5));
@@ -722,7 +723,7 @@ function perkSelection() {
             perks[perk3].use(pos(center().x + 200, center().y + 75))
             perks[perk3].play("play");
         };
-    } else if(60 < perkTimer <= 90) {
+    } else if(60 < perkTimer <= 10) {
         let i = rand(1, 100)
         if(i <= 20) {
             let perk1 = Math.round(rand(0,6));
@@ -935,9 +936,7 @@ function spawnBlackAnt(px, py, id) {
                         volume: 0.2,
                     })
 
-                    if(rand(10) < 5) {
-                        rootHp = rootHp + 10
-                    }
+                    
                     destroy(this);
                     return;
                 });
@@ -1153,6 +1152,15 @@ function moreblackants() {
     
 }
 
+function moreredAnt() {
+    wait(20, () => {
+        loop(1.5, () => {
+        spawnRedAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
+        })
+    })
+    
+}
+
 function redAnt() {
     loop(2, () => {
         spawnRedAnt(rand(100, width() - 100), rand(100, height() - 100), antId)
@@ -1172,6 +1180,7 @@ blackAntSPawn()
 redAnt()
 moreblackants()
 brownAntSpawn()
+moreredAnt()
 })
 
 
