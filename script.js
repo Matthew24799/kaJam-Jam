@@ -12,6 +12,13 @@ loadSound("anyDying", "assets/antDying.wav")
 loadSound("lose", "assets/lose.wav")
 loadSound("levelUp", "assets/levelUp.wav")
 
+loadSprite("flowerGun", "assets/flowerGun.png");
+loadSprite("flowerBullet", "assets/pollen ball.png", {
+    sliceX: 2,
+    anims: {
+        "shoot": {from: 0, to: 1, loop: true, speed: 5,}
+    }
+} )
 loadSprite("player", "assets/flowr.png", {
     sliceX: 4,
     sliceY: 4,
@@ -58,7 +65,6 @@ loadSprite("root","assets/Root.png", {
     },
 });
 
-loadSprite("peaShooter","assets/gun.png");
 
 loadSprite("perkBackground", "assets/PerkMenu.png", {
     sliceX: 6,
@@ -848,7 +854,8 @@ onKeyDown("s", () => {
 });
 
 const peaShooter = player.add([
-    sprite("peaShooter"),
+    sprite("flowerGun"),
+    scale(0.7),
     anchor(vec2(-2, 0)),
     rotate(0),
     "player",
@@ -867,9 +874,9 @@ function spawnPea(p) {
                     });
                 },
             },
-            circle((10 + bulletMod)),
+            sprite("flowerBullet"),
+            scale(0.2 + bulletMod),
             pos(p),
-            color(GREEN),
             "pea",
             area(),
             health(1 + pierceMod),
@@ -1136,42 +1143,6 @@ function spawnBrownAnt(px, py, id) {
 
 
 
-    function chaos() {
-        loop(1, () => {
-            if(!root.exists() || !player.exists()) return;
-
-            spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
-
-          });
-          wait(3, () => {
-             
-          
-          loop(5, () => {
-            if(!root.exists() || !player.exists()) return;
-            spawnRedAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
-            spawnRedAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
-            spawnRedAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
-        
-          });
-        })
-
-        wait(10, () => {
-            // after 1s 
-          
-          loop(20, () => {
-            if(!root.exists() || !player.exists()) return;
-            spawnBlackAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
-            spawnRedAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
-            spawnBrownAnt(rand(100, width() - 100), rand(100, height() - 100), antId);
-           
-          });
-        });
-    }
-
-    
-
-
-      chaos();
 })
 
 
